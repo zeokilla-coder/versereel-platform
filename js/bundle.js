@@ -317,9 +317,14 @@
   }
 
   // 3. Dedicated Mobile-Optimized Full-Page Comic Reader Component
-  function createComicReaderView(item, onBackToCatalog) {
-    const viewEl = document.createElement('div');
-    viewEl.className = 'fullpage-reader';
+  // 3. Full-Screen Mobile-Optimized Comic Reader Overlay Component
+  function openFullpageComicReader(item) {
+    const existing = document.getElementById('fullpage-comic-reader-overlay');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'fullpage-comic-reader-overlay';
+    overlay.className = 'fullpage-reader';
 
     let readerMode = 'webtoon'; // 'webtoon' (vertical scroll) | 'single' (paginado)
     let currentPageIndex = 0;
@@ -331,23 +336,29 @@
     function renderReader() {
       const isLocked = item.isPaid && !store.isItemUnlocked(item.id);
 
-      viewEl.innerHTML = `
+      overlay.innerHTML = `
         <!-- Top Navbar -->
         <header class="reader-navbar">
           <div class="reader-title-area">
-            <button class="btn-secondary" id="back-to-catalog-btn" style="padding: 0.35rem 0.75rem; font-size: 0.85rem; border-color: rgba(255,255,255,0.2);">
+            <button class="btn-secondary" id="back-to-catalog-btn" style="padding: 0.4rem 0.85rem; font-size: 0.88rem; font-weight: 700; border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.1);">
               <i class="ph-caret-left-bold"></i> Catálogo
             </button>
             <span class="reader-comic-title">${item.title}</span>
           </div>
 
-          <!-- Mode Switcher Pill -->
-          <div class="mode-toggle-pill">
-            <button type="button" class="mode-toggle-btn ${readerMode === 'webtoon' ? 'active' : ''}" id="mode-webtoon-btn" title="Modo Desplazamiento Vertical Continuo (Recomendado Celular)">
-              <i class="ph-rows"></i> Webtoon
-            </button>
-            <button type="button" class="mode-toggle-btn ${readerMode === 'single' ? 'active' : ''}" id="mode-single-btn" title="Modo Paginado (Página por Página)">
-              <i class="ph-book-open"></i> Paginado
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <!-- Mode Switcher Pill -->
+            <div class="mode-toggle-pill">
+              <button type="button" class="mode-toggle-btn ${readerMode === 'webtoon' ? 'active' : ''}" id="mode-webtoon-btn">
+                <i class="ph-rows"></i> Webtoon
+              </button>
+              <button type="button" class="mode-toggle-btn ${readerMode === 'single' ? 'active' : ''}" id="mode-single-btn">
+                <i class="ph-book-open"></i> Paginado
+              </button>
+            </div>
+
+            <button type="button" id="close-reader-x-btn" style="background: rgba(244,63,94,0.2); border: 1px solid var(--rose); color: var(--rose); width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; cursor: pointer;" title="Cerrar Lector">
+              &times;
             </button>
           </div>
         </header>
@@ -422,7 +433,7 @@
         <!-- Floating Bottom Toolbar -->
         <footer class="reader-bottom-bar">
           <button class="btn-secondary" id="reader-prev-btn" ${currentPageIndex === 0 || readerMode === 'webtoon' ? 'disabled style="opacity:0.3;"' : ''}>
-            <i class="ph-caret-left"></i>
+            <i class="ph-caret-left"></i> Anterior
           </button>
 
           <div style="display: flex; align-items: center; gap: 0.75rem;">
@@ -439,46 +450,39 @@
           </div>
 
           <button class="btn-primary" id="reader-next-btn" ${currentPageIndex === pages.length - 1 || readerMode === 'webtoon' ? 'disabled style="opacity:0.3;"' : ''}>
-            <i class="ph-caret-right"></i>
+            Siguiente <i class="ph-caret-right"></i>
           </button>
         </footer>
       `;
 
       // Attach event listeners
-      const backBtn = viewEl.querySelector('#back-to-catalog-btn');
-      if (backBtn) {
-        backBtn.onclick = (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          if (onBackToCatalog) {
-            onBackToCatalog();
-          } else {
-            window.location.href = window.location.origin + window.location.pathname;
-          }
-        };
-      }
+      const closeOverlay = () => {
+        overlay.remove();
+      };
 
-      const modeWebtoonBtn = viewEl.querySelector('#mode-webtoon-btn');
+      const backBtn = overlay.querySelector('#back-to-catalog-btn');
+      if (backBtn) backBtn.onclick = closeOverlay;
+
+      const xBtn = overlay.querySelector('#close-reader-x-btn');
+      if (xBtn) xBtn.onclick = closeOverlay;
+
+      const modeWebtoonBtn = overlay.querySelector('#mode-webtoon-btn');
       if (modeWebtoonBtn) {
-        modeWebtoonBtn.onclick = (e) => {
-          e.preventDefault();
-          e.stopPropagation();
+        modeWebtoonBtn.onclick = () => {
           readerMode = 'webtoon';
           renderReader();
         };
       }
 
-      const modeSingleBtn = viewEl.querySelector('#mode-single-btn');
+      const modeSingleBtn = overlay.querySelector('#mode-single-btn');
       if (modeSingleBtn) {
-        modeSingleBtn.onclick = (e) => {
-          e.preventDefault();
-          e.stopPropagation();
+        modeSingleBtn.onclick = () => {
           readerMode = 'single';
           renderReader();
         };
       }
 
-      const prevBtn = viewEl.querySelector('#reader-prev-btn');
+      const prevBtn = overlay.querySelector('#reader-prev-btn');
       if (prevBtn) {
         prevBtn.onclick = () => {
           if (currentPageIndex > 0) {
@@ -488,7 +492,7 @@
         };
       }
 
-      const nextBtn = viewEl.querySelector('#reader-next-btn');
+      const nextBtn = overlay.querySelector('#reader-next-btn');
       if (nextBtn) {
         nextBtn.onclick = () => {
           if (currentPageIndex < pages.length - 1) {
@@ -498,12 +502,12 @@
         };
       }
 
-      const unlockBtn = viewEl.querySelector('#paywall-unlock-btn');
+      const unlockBtn = overlay.querySelector('#paywall-unlock-btn');
       if (unlockBtn) {
         unlockBtn.onclick = () => {
           if (item.paymentUrl) {
             window.open(item.paymentUrl, '_blank');
-            const confirmBox = viewEl.querySelector('#payment-confirm-box');
+            const confirmBox = overlay.querySelector('#payment-confirm-box');
             if (confirmBox) confirmBox.style.display = 'block';
           } else {
             const res = store.unlockItem(item.id);
@@ -512,7 +516,7 @@
         };
       }
 
-      const confirmBtn = viewEl.querySelector('#confirm-unlock-btn');
+      const confirmBtn = overlay.querySelector('#confirm-unlock-btn');
       if (confirmBtn) {
         confirmBtn.onclick = () => {
           const res = store.unlockItem(item.id);
@@ -522,15 +526,15 @@
 
       // Zoom Listeners
       const applyViewZoom = () => {
-        const singleImg = viewEl.querySelector('#single-page-img');
-        const zoomLabel = viewEl.querySelector('#reader-zoom-label');
+        const singleImg = overlay.querySelector('#single-page-img');
+        const zoomLabel = overlay.querySelector('#reader-zoom-label');
         if (singleImg) {
           singleImg.style.transform = `scale(${zoomLevel / 100})`;
         }
         if (zoomLabel) zoomLabel.innerText = `${zoomLevel}%`;
       };
 
-      const zoomIn = viewEl.querySelector('#reader-zoom-in');
+      const zoomIn = overlay.querySelector('#reader-zoom-in');
       if (zoomIn) {
         zoomIn.onclick = () => {
           zoomLevel = Math.min(300, zoomLevel + 25);
@@ -538,7 +542,7 @@
         };
       }
 
-      const zoomOut = viewEl.querySelector('#reader-zoom-out');
+      const zoomOut = overlay.querySelector('#reader-zoom-out');
       if (zoomOut) {
         zoomOut.onclick = () => {
           zoomLevel = Math.max(80, zoomLevel - 25);
@@ -548,14 +552,14 @@
 
       // Track scroll progress in Webtoon mode
       if (readerMode === 'webtoon') {
-        const scrollContainer = viewEl.querySelector('#webtoon-container');
+        const scrollContainer = overlay.querySelector('#webtoon-container');
         if (scrollContainer) {
           scrollContainer.onscroll = () => {
             const pageElems = scrollContainer.querySelectorAll('[id^="page-elem-"]');
             pageElems.forEach((elem, idx) => {
               const rect = elem.getBoundingClientRect();
               if (rect.top >= 0 && rect.top <= window.innerHeight / 2) {
-                const counterNum = viewEl.querySelector('#page-counter-num');
+                const counterNum = overlay.querySelector('#page-counter-num');
                 if (counterNum) counterNum.innerText = idx + 1;
               }
             });
@@ -565,12 +569,12 @@
     }
 
     renderReader();
+    document.body.appendChild(overlay);
     store.incrementViews(item.id);
-    return viewEl;
   }
 
   function createComicReaderModal(item, onClose, onUnlockRequest) {
-    return createComicReaderView(item, onClose);
+    openFullpageComicReader(item);
   }
 
   // 4. Video Player Component
@@ -1370,15 +1374,13 @@
 
         const item = store.getItems().find(i => i.id === comicId);
         if (item) {
-          if (item.type === 'comic') {
-            this.currentComic = item;
-            this.currentView = 'reader';
-            this.render();
-          } else {
-            setTimeout(() => {
+          setTimeout(() => {
+            if (item.type === 'comic') {
+              openFullpageComicReader(item);
+            } else {
               createVideoPlayerModal(item, () => this.render());
-            }, 300);
-          }
+            }
+          }, 300);
         }
       }
     }
@@ -1562,10 +1564,7 @@
           if (!item) return;
 
           if (item.type === 'comic') {
-            this.currentComic = item;
-            this.currentView = 'reader';
-            history.pushState({}, '', '?comic=' + item.id);
-            this.render();
+            openFullpageComicReader(item);
           } else {
             createVideoPlayerModal(item, () => this.render());
           }
@@ -1576,17 +1575,6 @@
     render() {
       const root = document.getElementById('app');
       if (!root) return;
-
-      if (this.currentView === 'reader' && this.currentComic) {
-        root.innerHTML = '';
-        const readerView = createComicReaderView(this.currentComic, () => {
-          this.currentView = 'audience';
-          history.pushState({}, '', window.location.pathname);
-          this.render();
-        });
-        root.appendChild(readerView);
-        return;
-      }
 
       root.innerHTML = `
         <div class="app-container">
