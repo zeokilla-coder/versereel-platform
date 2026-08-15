@@ -100,7 +100,7 @@
     async initAsyncStorage() {
       try {
         const saved = await loadFromDB(STORAGE_KEY);
-        if (saved && saved.items) {
+        if (saved) {
           this.data = { ...INITIAL_DATA, ...saved };
         } else {
           const raw = localStorage.getItem(STORAGE_KEY);
@@ -114,17 +114,8 @@
         console.warn('DB load fallback:', err);
       }
 
-      // Always merge COMICS_CATALOG items
-      if (!this.data.items || this.data.items.length === 0) {
-        this.data.items = [...COMICS_CATALOG];
-      } else {
-        COMICS_CATALOG.forEach(catItem => {
-          if (!this.data.items.some(i => i.id === catItem.id)) {
-            this.data.items.push(catItem);
-          }
-        });
-      }
-
+      // Enforce strict single source of truth for public catalog
+      this.data.items = [...COMICS_CATALOG];
       this.notify();
     }
 
@@ -162,16 +153,7 @@
     }
 
     getItems() {
-      if (!this.data.items) this.data.items = [];
-      COMICS_CATALOG.forEach(catItem => {
-        const idx = this.data.items.findIndex(i => i.id === catItem.id || i.title === catItem.title);
-        if (idx !== -1) {
-          this.data.items[idx] = { ...this.data.items[idx], ...catItem };
-        } else {
-          this.data.items.unshift(catItem);
-        }
-      });
-      return this.data.items;
+      return [...COMICS_CATALOG];
     }
 
     isItemUnlocked(itemId) {
