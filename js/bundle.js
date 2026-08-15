@@ -105,27 +105,33 @@
     }
 
     async initAsyncStorage() {
-      const saved = await loadFromDB(STORAGE_KEY);
-      if (saved && saved.items) {
-        this.data = { ...INITIAL_DATA, ...saved };
-        // Sync catalog items
+      try {
+        const saved = await loadFromDB(STORAGE_KEY);
+        if (saved && saved.items) {
+          this.data = { ...INITIAL_DATA, ...saved };
+        } else {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (raw) {
+            try {
+              this.data = { ...INITIAL_DATA, ...JSON.parse(raw) };
+            } catch (e) {}
+          }
+        }
+      } catch (err) {
+        console.warn('DB load fallback:', err);
+      }
+
+      // Always merge COMICS_CATALOG items
+      if (!this.data.items || this.data.items.length === 0) {
+        this.data.items = [...COMICS_CATALOG];
+      } else {
         COMICS_CATALOG.forEach(catItem => {
           if (!this.data.items.some(i => i.id === catItem.id)) {
             this.data.items.push(catItem);
           }
         });
-      } else {
-        this.data = { ...INITIAL_DATA, items: [...COMICS_CATALOG] };
       }
-      this.notify();
-    }
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) {
-          try {
-            this.data = { ...INITIAL_DATA, ...JSON.parse(raw) };
-          } catch (e) {}
-        }
-      }
+
       this.notify();
     }
 
