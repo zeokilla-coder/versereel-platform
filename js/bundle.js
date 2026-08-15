@@ -316,281 +316,248 @@
     };
   }
 
-  // 3. Comic Reader Component
-  function createComicReaderModal(item, onClose, onUnlockRequest) {
-    const backdrop = document.createElement('div');
-    backdrop.className = 'modal-backdrop';
+  // 3. Dedicated Mobile-Optimized Full-Page Comic Reader Component
+  function createComicReaderView(item, onBackToCatalog) {
+    const viewEl = document.createElement('div');
+    viewEl.className = 'fullpage-reader';
 
-    const content = document.createElement('div');
-    content.className = 'modal-content reader-modal';
-
+    let readerMode = 'webtoon'; // 'webtoon' (vertical scroll) | 'single' (paginado)
     let currentPageIndex = 0;
-    let zoomLevel = 100; // 80% to 350%
-    let isPanning = false;
-    let startX = 0, startY = 0;
-    let scrollLeft = 0, scrollTop = 0;
+    let zoomLevel = 100;
 
-    const isUnlocked = store.isItemUnlocked(item.id);
     const pages = item.pages || [item.thumbnail];
     const previewLimit = item.previewLimit || 15;
 
-    function applyZoom() {
-      const imgEl = content.querySelector('.comic-page-img');
-      const rangeEl = content.querySelector('#zoom-range');
-      const labelEl = content.querySelector('#zoom-label');
-      const containerEl = content.querySelector('.reader-container');
+    function renderReader() {
+      const isLocked = item.isPaid && !store.isItemUnlocked(item.id);
 
-      if (imgEl) {
-        imgEl.style.transform = `scale(${zoomLevel / 100})`;
-        imgEl.style.transformOrigin = 'top center';
-        imgEl.style.cursor = zoomLevel > 100 ? (isPanning ? 'grabbing' : 'grab') : 'zoom-in';
-      }
-      if (rangeEl) rangeEl.value = zoomLevel;
-      if (labelEl) labelEl.innerText = `${zoomLevel}%`;
-    }
-
-    function renderBody() {
-      const isLockedPage = item.isPaid && !store.isItemUnlocked(item.id) && currentPageIndex >= previewLimit;
-
-      content.innerHTML = `
-        <div class="modal-header">
-          <div class="modal-title">
-            <i class="ph-book-open" style="color: var(--primary);"></i>
-            <span>${item.title}</span>
-            ${item.isPaid ? `<span class="price-tag paid">$${item.price.toFixed(2)}</span>` : '<span class="price-tag free">FREE</span>'}
+      viewEl.innerHTML = `
+        <!-- Top Navbar -->
+        <header class="reader-navbar">
+          <div class="reader-title-area">
+            <button class="btn-secondary" id="back-to-catalog-btn" style="padding: 0.35rem 0.75rem; font-size: 0.85rem; border-color: rgba(255,255,255,0.2);">
+              <i class="ph-caret-left-bold"></i> Catálogo
+            </button>
+            <span class="reader-comic-title">${item.title}</span>
           </div>
-          <button class="close-btn" id="reader-close-btn">&times;</button>
-        </div>
-        <div class="modal-body">
-          <div class="reader-container">
-            ${isLockedPage ? `
+
+          <!-- Mode Switcher Pill -->
+          <div class="mode-toggle-pill">
+            <button type="button" class="mode-toggle-btn ${readerMode === 'webtoon' ? 'active' : ''}" id="mode-webtoon-btn" title="Modo Desplazamiento Vertical Continuo (Recomendado Celular)">
+              <i class="ph-rows"></i> Webtoon
+            </button>
+            <button type="button" class="mode-toggle-btn ${readerMode === 'single' ? 'active' : ''}" id="mode-single-btn" title="Modo Paginado (Página por Página)">
+              <i class="ph-book-open"></i> Paginado
+            </button>
+          </div>
+        </header>
+
+        <!-- Reader Main Content Container -->
+        ${readerMode === 'webtoon' ? `
+          <div class="webtoon-scroll-container" id="webtoon-container">
+            <div class="webtoon-page-wrapper">
+              ${pages.map((pageUrl, idx) => {
+                if (isLocked && idx >= previewLimit) {
+                  if (idx === previewLimit) {
+                    return `
+                      <div class="paywall-card" style="margin: 3rem 1rem;">
+                        <div class="paywall-icon"><i class="ph-lock"></i></div>
+                        <h2 style="color:#fff; font-size:1.4rem; font-weight:800;">Límite de Muestra Gratuita</h2>
+                        <p style="color: var(--text-muted); font-size: 0.92rem;">
+                          Has leído las ${previewLimit} páginas gratuitas. ¡Para continuar disfrutando de las ${pages.length} páginas de este cómic, realiza tu pago a continuación!
+                        </p>
+                        <div class="paywall-price">$${item.price.toFixed(2)}</div>
+                        <button class="btn-primary" id="paywall-unlock-btn" style="width: 100%; justify-content: center; font-size: 1.05rem; padding: 0.9rem;">
+                          <i class="ph-credit-card"></i> ${item.paymentUrl ? 'Ir a Pagar $' + item.price.toFixed(2) : 'Desbloquear Cómic ($' + item.price.toFixed(2) + ')'}
+                        </button>
+                        <div id="payment-confirm-box" style="display: none; width: 100%; margin-top: 0.75rem; background: rgba(16, 185, 129, 0.12); border: 1px solid var(--emerald); padding: 1rem; border-radius: var(--radius-md); text-align: center;">
+                          <p style="color: #34d399; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem;">¿Ya realizaste tu pago en la pasarela?</p>
+                          <button class="btn-secondary" id="confirm-unlock-btn" style="width: 100%; justify-content: center; border-color: var(--emerald); color: #34d399;">
+                            <i class="ph-check-circle"></i> Confirmar Pago y Continuar
+                          </button>
+                        </div>
+                      </div>
+                    `;
+                  }
+                  return '';
+                }
+                return `
+                  <div style="width:100%; position:relative;" id="page-elem-${idx}">
+                    <img src="${pageUrl}" class="webtoon-page-img" alt="Página ${idx + 1}" loading="lazy" />
+                    <div style="position:absolute; bottom:8px; right:12px; background:rgba(0,0,0,0.6); color:rgba(255,255,255,0.7); font-size:0.7rem; padding:2px 6px; border-radius:4px;">
+                      Pág ${idx + 1}
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        ` : `
+          <!-- Single Page Mode -->
+          <div class="single-page-container" id="single-container">
+            ${isLocked && currentPageIndex >= previewLimit ? `
               <div class="paywall-card">
-                <div class="paywall-icon">
-                  <i class="ph-lock"></i>
-                </div>
-                <h2 style="color:#fff; font-size:1.5rem; font-weight:800;">Límite de Muestra Alcanzado</h2>
-                <p style="color: var(--text-muted); font-size: 0.95rem;">
-                  Has completado las ${previewLimit} páginas de muestra gratuita. ¡Para continuar leyendo las ${pages.length} páginas de este cómic, realiza tu pago a continuación!
+                <div class="paywall-icon"><i class="ph-lock"></i></div>
+                <h2 style="color:#fff; font-size:1.4rem; font-weight:800;">Límite de Muestra Gratuita</h2>
+                <p style="color: var(--text-muted); font-size: 0.92rem;">
+                  Has leído las ${previewLimit} páginas gratuitas. ¡Para continuar leyendo las ${pages.length} páginas, realiza tu pago a continuación!
                 </p>
                 <div class="paywall-price">$${item.price.toFixed(2)}</div>
-                
                 <button class="btn-primary" id="paywall-unlock-btn" style="width: 100%; justify-content: center; font-size: 1.05rem; padding: 0.9rem;">
-                  <i class="ph-credit-card"></i> ${item.paymentUrl ? 'Ir a Pagar $' + item.price.toFixed(2) : 'Desbloquear Cómic Completo ($' + item.price.toFixed(2) + ')'}
+                  <i class="ph-credit-card"></i> ${item.paymentUrl ? 'Ir a Pagar $' + item.price.toFixed(2) : 'Desbloquear Cómic ($' + item.price.toFixed(2) + ')'}
                 </button>
-
                 <div id="payment-confirm-box" style="display: none; width: 100%; margin-top: 0.75rem; background: rgba(16, 185, 129, 0.12); border: 1px solid var(--emerald); padding: 1rem; border-radius: var(--radius-md); text-align: center;">
-                  <p style="color: #34d399; font-weight: 700; font-size: 0.88rem; margin-bottom: 0.6rem;">
-                    ¿Ya completaste tu pago en la pasarela? Haz clic abajo para continuar leyendo:
-                  </p>
-                  <button class="btn-secondary" id="confirm-unlock-btn" style="width: 100%; justify-content: center; border-color: var(--emerald); color: #34d399; font-weight: 700;">
-                    <i class="ph-check-circle"></i> Confirmar Pago y Leer Ahora
+                  <p style="color: #34d399; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem;">¿Ya realizaste tu pago en la pasarela?</p>
+                  <button class="btn-secondary" id="confirm-unlock-btn" style="width: 100%; justify-content: center; border-color: var(--emerald); color: #34d399;">
+                    <i class="ph-check-circle"></i> Confirmar Pago y Continuar
                   </button>
                 </div>
               </div>
             ` : `
-              <img src="${pages[currentPageIndex]}" alt="Page ${currentPageIndex + 1}" class="comic-page-img" title="Gira la rueda del mouse, usa la barra o arrastra la imagen para Zoom & Pan" />
+              <img src="${pages[currentPageIndex]}" class="single-page-img" id="single-page-img" alt="Página ${currentPageIndex + 1}" />
             `}
           </div>
+        `}
 
-          <div class="reader-controls" style="display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; width: 100%; margin-top: 1rem; flex-wrap: wrap;">
-            <button class="btn-secondary" id="prev-page-btn" ${currentPageIndex === 0 ? 'disabled' : ''}>
-              <i class="ph-caret-left"></i> Anterior
-            </button>
-            
-            <div style="display: flex; align-items: center; gap: 0.85rem; flex-wrap: wrap;">
-              <div style="font-weight: 700; color: #fff; font-size: 0.95rem;">
-                Página <span style="color: var(--primary);">${currentPageIndex + 1}</span> de ${pages.length}
-                ${item.isPaid && !store.isItemUnlocked(item.id) ? `<span style="font-size:0.8rem; color:var(--amber); margin-left:0.4rem;">(Prueba ${previewLimit} págs)</span>` : ''}
-              </div>
+        <!-- Floating Bottom Toolbar -->
+        <footer class="reader-bottom-bar">
+          <button class="btn-secondary" id="reader-prev-btn" ${currentPageIndex === 0 || readerMode === 'webtoon' ? 'disabled style="opacity:0.3;"' : ''}>
+            <i class="ph-caret-left"></i>
+          </button>
 
-              <!-- Ultra-Interactive Zoom Controls -->
-              ${!isLockedPage ? `
-                <div style="display: flex; align-items: center; gap: 6px; background: rgba(0,0,0,0.6); padding: 4px 10px; border-radius: var(--radius-full); border: 1px solid var(--border-color);">
-                  <button type="button" id="zoom-out-btn" class="btn-secondary" style="padding: 2px 7px; font-size: 0.85rem; border: none; background: transparent; color: #fff;" title="Alejar (o Rueda del mouse)">
-                    <i class="ph-magnifying-glass-minus"></i>
-                  </button>
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span style="font-size: 0.88rem; font-weight: 800; color: #fff;">
+              Página <span style="color: var(--primary);" id="page-counter-num">${currentPageIndex + 1}</span> de ${pages.length}
+            </span>
 
-                  <input type="range" id="zoom-range" min="80" max="350" step="5" value="${zoomLevel}" style="width: 90px; accent-color: var(--primary); cursor: pointer;" title="Desliza para ajustar el zoom" />
-
-                  <span id="zoom-label" style="font-size: 0.82rem; font-weight: 700; color: var(--cyan); min-width: 45px; text-align: center; cursor: pointer;" title="Haz clic para restablecer al 100%">
-                    ${zoomLevel}%
-                  </span>
-
-                  <button type="button" id="zoom-in-btn" class="btn-secondary" style="padding: 2px 7px; font-size: 0.85rem; border: none; background: transparent; color: #fff;" title="Acercar (o Rueda del mouse)">
-                    <i class="ph-magnifying-glass-plus"></i>
-                  </button>
-
-                  <button type="button" id="zoom-reset-btn" class="btn-secondary" style="padding: 2px 6px; font-size: 0.75rem; border-color: rgba(255,255,255,0.2); color: var(--text-muted);" title="Restablecer a 100%">
-                    <i class="ph-arrows-counter-clockwise"></i> 100%
-                  </button>
-                </div>
-              ` : ''}
+            <!-- Zoom Pill -->
+            <div style="display: flex; align-items: center; gap: 4px; background: rgba(0,0,0,0.6); padding: 2px 8px; border-radius: var(--radius-full); border: 1px solid var(--border-color);">
+              <button type="button" id="reader-zoom-out" style="background:transparent; border:none; color:#fff; cursor:pointer; padding:2px 5px;"><i class="ph-minus-bold"></i></button>
+              <span id="reader-zoom-label" style="font-size:0.78rem; font-weight:700; color:var(--cyan); min-width:40px; text-align:center;">${zoomLevel}%</span>
+              <button type="button" id="reader-zoom-in" style="background:transparent; border:none; color:#fff; cursor:pointer; padding:2px 5px;"><i class="ph-plus-bold"></i></button>
             </div>
-
-            <button class="btn-primary" id="next-page-btn" ${currentPageIndex === pages.length - 1 ? 'disabled' : ''}>
-              Siguiente <i class="ph-caret-right"></i>
-            </button>
           </div>
-        </div>
+
+          <button class="btn-primary" id="reader-next-btn" ${currentPageIndex === pages.length - 1 || readerMode === 'webtoon' ? 'disabled style="opacity:0.3;"' : ''}>
+            <i class="ph-caret-right"></i>
+          </button>
+        </footer>
       `;
 
-      content.querySelector('#reader-close-btn').onclick = () => {
-        document.body.removeChild(backdrop);
-        if (onClose) onClose();
+      // Attach event listeners
+      viewEl.querySelector('#back-to-catalog-btn').onclick = () => {
+        if (onBackToCatalog) onBackToCatalog();
       };
 
-      const prevBtn = content.querySelector('#prev-page-btn');
+      const modeWebtoonBtn = viewEl.querySelector('#mode-webtoon-btn');
+      if (modeWebtoonBtn) {
+        modeWebtoonBtn.onclick = () => {
+          readerMode = 'webtoon';
+          renderReader();
+        };
+      }
+
+      const modeSingleBtn = viewEl.querySelector('#mode-single-btn');
+      if (modeSingleBtn) {
+        modeSingleBtn.onclick = () => {
+          readerMode = 'single';
+          renderReader();
+        };
+      }
+
+      const prevBtn = viewEl.querySelector('#reader-prev-btn');
       if (prevBtn) {
         prevBtn.onclick = () => {
           if (currentPageIndex > 0) {
             currentPageIndex--;
-            renderBody();
+            renderReader();
           }
         };
       }
 
-      const nextBtn = content.querySelector('#next-page-btn');
+      const nextBtn = viewEl.querySelector('#reader-next-btn');
       if (nextBtn) {
         nextBtn.onclick = () => {
           if (currentPageIndex < pages.length - 1) {
             currentPageIndex++;
-            renderBody();
+            renderReader();
           }
         };
       }
 
-      const readerContainer = content.querySelector('.reader-container');
-      const imgEl = content.querySelector('.comic-page-img');
-
-      if (!isLockedPage && readerContainer) {
-        applyZoom();
-
-        // Mouse Wheel Zooming
-        readerContainer.onwheel = (e) => {
-          e.preventDefault();
-          if (e.deltaY < 0) {
-            zoomLevel = Math.min(350, zoomLevel + 15);
-          } else {
-            zoomLevel = Math.max(80, zoomLevel - 15);
-          }
-          applyZoom();
-        };
-
-        // Drag to Pan Hand Tool
-        readerContainer.onmousedown = (e) => {
-          if (zoomLevel > 100) {
-            isPanning = true;
-            startX = e.pageX - readerContainer.offsetLeft;
-            startY = e.pageY - readerContainer.offsetTop;
-            scrollLeft = readerContainer.scrollLeft;
-            scrollTop = readerContainer.scrollTop;
-            applyZoom();
-          }
-        };
-
-        readerContainer.onmouseleave = () => {
-          isPanning = false;
-          applyZoom();
-        };
-
-        readerContainer.onmouseup = () => {
-          isPanning = false;
-          applyZoom();
-        };
-
-        readerContainer.onmousemove = (e) => {
-          if (!isPanning) return;
-          e.preventDefault();
-          const x = e.pageX - readerContainer.offsetLeft;
-          const y = e.pageY - readerContainer.offsetTop;
-          const walkX = (x - startX) * 1.5;
-          const walkY = (y - startY) * 1.5;
-          readerContainer.scrollLeft = scrollLeft - walkX;
-          readerContainer.scrollTop = scrollTop - walkY;
-        };
-
-        if (imgEl) {
-          imgEl.onclick = (e) => {
-            if (!isPanning) {
-              zoomLevel = zoomLevel === 100 ? 160 : 100;
-              applyZoom();
-            }
-          };
-        }
-      }
-
-      const rangeInput = content.querySelector('#zoom-range');
-      if (rangeInput) {
-        rangeInput.oninput = (e) => {
-          zoomLevel = parseInt(e.target.value);
-          applyZoom();
-        };
-      }
-
-      const zoomInBtn = content.querySelector('#zoom-in-btn');
-      if (zoomInBtn) {
-        zoomInBtn.onclick = () => {
-          if (zoomLevel < 350) {
-            zoomLevel = Math.min(350, zoomLevel + 25);
-            applyZoom();
-          }
-        };
-      }
-
-      const zoomOutBtn = content.querySelector('#zoom-out-btn');
-      if (zoomOutBtn) {
-        zoomOutBtn.onclick = () => {
-          if (zoomLevel > 80) {
-            zoomLevel = Math.max(80, zoomLevel - 25);
-            applyZoom();
-          }
-        };
-      }
-
-      const zoomResetBtn = content.querySelector('#zoom-reset-btn');
-      if (zoomResetBtn) {
-        zoomResetBtn.onclick = () => {
-          zoomLevel = 100;
-          applyZoom();
-        };
-      }
-
-      const zoomLabel = content.querySelector('#zoom-label');
-      if (zoomLabel) {
-        zoomLabel.onclick = () => {
-          zoomLevel = 100;
-          applyZoom();
-        };
-      }
-
-      const unlockBtn = content.querySelector('#paywall-unlock-btn');
+      const unlockBtn = viewEl.querySelector('#paywall-unlock-btn');
       if (unlockBtn) {
         unlockBtn.onclick = () => {
           if (item.paymentUrl) {
             window.open(item.paymentUrl, '_blank');
-            const confirmBox = content.querySelector('#payment-confirm-box');
+            const confirmBox = viewEl.querySelector('#payment-confirm-box');
             if (confirmBox) confirmBox.style.display = 'block';
           } else {
             const res = store.unlockItem(item.id);
-            if (res.success) renderBody();
+            if (res.success) renderReader();
           }
         };
       }
 
-      const confirmBtn = content.querySelector('#confirm-unlock-btn');
+      const confirmBtn = viewEl.querySelector('#confirm-unlock-btn');
       if (confirmBtn) {
         confirmBtn.onclick = () => {
           const res = store.unlockItem(item.id);
-          if (res.success) renderBody();
+          if (res.success) renderReader();
         };
+      }
+
+      // Zoom Listeners
+      const applyViewZoom = () => {
+        const singleImg = viewEl.querySelector('#single-page-img');
+        const zoomLabel = viewEl.querySelector('#reader-zoom-label');
+        if (singleImg) {
+          singleImg.style.transform = `scale(${zoomLevel / 100})`;
+        }
+        if (zoomLabel) zoomLabel.innerText = `${zoomLevel}%`;
+      };
+
+      const zoomIn = viewEl.querySelector('#reader-zoom-in');
+      if (zoomIn) {
+        zoomIn.onclick = () => {
+          zoomLevel = Math.min(300, zoomLevel + 25);
+          applyViewZoom();
+        };
+      }
+
+      const zoomOut = viewEl.querySelector('#reader-zoom-out');
+      if (zoomOut) {
+        zoomOut.onclick = () => {
+          zoomLevel = Math.max(80, zoomLevel - 25);
+          applyViewZoom();
+        };
+      }
+
+      // Track scroll progress in Webtoon mode
+      if (readerMode === 'webtoon') {
+        const scrollContainer = viewEl.querySelector('#webtoon-container');
+        if (scrollContainer) {
+          scrollContainer.onscroll = () => {
+            const pageElems = scrollContainer.querySelectorAll('[id^="page-elem-"]');
+            pageElems.forEach((elem, idx) => {
+              const rect = elem.getBoundingClientRect();
+              if (rect.top >= 0 && rect.top <= window.innerHeight / 2) {
+                const counterNum = viewEl.querySelector('#page-counter-num');
+                if (counterNum) counterNum.innerText = idx + 1;
+              }
+            });
+          };
+        }
       }
     }
 
-    backdrop.appendChild(content);
-    document.body.appendChild(backdrop);
-    renderBody();
-
+    renderReader();
     store.incrementViews(item.id);
+    return viewEl;
+  }
+
+  function createComicReaderModal(item, onClose, onUnlockRequest) {
+    return createComicReaderView(item, onClose);
   }
 
   // 4. Video Player Component
@@ -1390,13 +1357,15 @@
 
         const item = store.getItems().find(i => i.id === comicId);
         if (item) {
-          setTimeout(() => {
-            if (item.type === 'comic') {
-              createComicReaderModal(item, () => this.render(), (msg) => this.showToast(msg));
-            } else {
+          if (item.type === 'comic') {
+            this.currentComic = item;
+            this.currentView = 'reader';
+            this.render();
+          } else {
+            setTimeout(() => {
               createVideoPlayerModal(item, () => this.render());
-            }
-          }, 300);
+            }, 300);
+          }
         }
       }
     }
@@ -1580,7 +1549,10 @@
           if (!item) return;
 
           if (item.type === 'comic') {
-            createComicReaderModal(item, () => this.render(), (msg) => this.showToast(msg));
+            this.currentComic = item;
+            this.currentView = 'reader';
+            history.pushState({}, '', '?comic=' + item.id);
+            this.render();
           } else {
             createVideoPlayerModal(item, () => this.render());
           }
@@ -1591,6 +1563,17 @@
     render() {
       const root = document.getElementById('app');
       if (!root) return;
+
+      if (this.currentView === 'reader' && this.currentComic) {
+        root.innerHTML = '';
+        const readerView = createComicReaderView(this.currentComic, () => {
+          this.currentView = 'audience';
+          history.pushState({}, '', window.location.pathname);
+          this.render();
+        });
+        root.appendChild(readerView);
+        return;
+      }
 
       root.innerHTML = `
         <div class="app-container">
