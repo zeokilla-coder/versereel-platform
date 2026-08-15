@@ -25,16 +25,8 @@
       previewLimit: 20,
       paymentUrl: "https://mpago.la/2om6XKk",
       paypalUrl: "https://www.paypal.com/invoice/p/#4EV2U6E59BUXU3C6",
-      thumbnail: "assets/0.jpg",
-      pages: [
-        "assets/0.jpg", "assets/1.jpg", "assets/2.jpg", "assets/3.jpg", "assets/4.jpg",
-        "assets/5.jpg", "assets/6.jpg", "assets/7.jpg", "assets/8.jpg", "assets/9.jpg",
-        "assets/10.jpg", "assets/11.jpg", "assets/12.jpg", "assets/13.jpg", "assets/14.jpg",
-        "assets/15.jpg", "assets/16.jpg", "assets/17.jpg", "assets/18.jpg", "assets/19.jpg",
-        "assets/20.jpg", "assets/21.jpg", "assets/22.jpg", "assets/23.jpg", "assets/24.jpg",
-        "assets/25.jpg", "assets/26.jpg", "assets/27.jpg", "assets/28.jpg", "assets/29.jpg",
-        "assets/30.jpg"
-      ],
+      thumbnail: "https://res.cloudinary.com/bre5du5y/image/upload/f_auto,q_auto/0.jpg",
+      pages: Array.from({ length: 31 }, (_, i) => `https://res.cloudinary.com/bre5du5y/image/upload/f_auto,q_auto/${i}.jpg`),
       views: 142,
       createdAt: new Date().toISOString()
     }
