@@ -450,7 +450,11 @@
         backBtn.onclick = (e) => {
           e.preventDefault();
           e.stopPropagation();
-          if (onBackToCatalog) onBackToCatalog();
+          if (onBackToCatalog) {
+            onBackToCatalog();
+          } else {
+            window.location.href = window.location.origin + window.location.pathname;
+          }
         };
       }
 
