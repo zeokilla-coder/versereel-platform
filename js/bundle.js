@@ -1380,24 +1380,13 @@
           </div>
 
           <div class="nav-links">
-            <button class="nav-btn ${this.currentView === 'audience' ? 'active' : ''}" id="nav-audience-btn">
-              <i class="ph-compass"></i> Explore Hub
-            </button>
-            <button class="nav-btn ${this.currentView === 'creator' ? 'active' : ''}" id="nav-creator-btn">
-              <i class="ph-user-gear"></i> ${this.isAdminAuthenticated ? 'Creator Studio (Admin)' : 'Admin Login'}
+            <button class="nav-btn active" id="nav-audience-btn">
+              <i class="ph-compass"></i> Catálogo de Cómics & Videos
             </button>
           </div>
 
           <div class="nav-actions">
-            ${this.isAdminAuthenticated ? `
-              <button class="btn-secondary" id="logout-admin-btn" style="padding: 0.45rem 0.85rem; font-size: 0.82rem; border-color: var(--rose); color: var(--rose);">
-                <i class="ph-sign-out"></i> Salir de Admin
-              </button>
-            ` : ''}
-            <button class="mode-switcher" id="toggle-view-mode-btn">
-              <i class="${this.currentView === 'audience' ? 'ph-lock-key' : 'ph-eye'}"></i>
-              <span>${this.currentView === 'audience' ? 'Panel de Creador (Admin)' : 'Volver a la Web'}</span>
-            </button>
+            <!-- Public audience focus -->
           </div>
         </nav>
       `;
