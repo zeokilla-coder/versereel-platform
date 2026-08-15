@@ -334,34 +334,46 @@ class App {
     `;
 
     // Global Navbar Events
-    root.querySelector('#logo-btn').onclick = () => {
-      this.currentView = 'audience';
-      this.render();
-    };
-
-    root.querySelector('#nav-audience-btn').onclick = () => {
-      this.currentView = 'audience';
-      this.render();
-    };
-
-    root.querySelector('#nav-creator-btn').onclick = () => {
-      this.handleAdminAccess(() => {
-        this.currentView = 'creator';
-        this.render();
-      });
-    };
-
-    root.querySelector('#toggle-view-mode-btn').onclick = () => {
-      if (this.currentView === 'creator') {
+    const logoBtn = root.querySelector('#logo-btn');
+    if (logoBtn) {
+      logoBtn.onclick = () => {
         this.currentView = 'audience';
         this.render();
-      } else {
+      };
+    }
+
+    const navAudienceBtn = root.querySelector('#nav-audience-btn');
+    if (navAudienceBtn) {
+      navAudienceBtn.onclick = () => {
+        this.currentView = 'audience';
+        this.render();
+      };
+    }
+
+    const navCreatorBtn = root.querySelector('#nav-creator-btn');
+    if (navCreatorBtn) {
+      navCreatorBtn.onclick = () => {
         this.handleAdminAccess(() => {
           this.currentView = 'creator';
           this.render();
         });
-      }
-    };
+      };
+    }
+
+    const toggleBtn = root.querySelector('#toggle-view-mode-btn');
+    if (toggleBtn) {
+      toggleBtn.onclick = () => {
+        if (this.currentView === 'creator') {
+          this.currentView = 'audience';
+          this.render();
+        } else {
+          this.handleAdminAccess(() => {
+            this.currentView = 'creator';
+            this.render();
+          });
+        }
+      };
+    }
 
     const logoutBtn = root.querySelector('#logout-admin-btn');
     if (logoutBtn) {
