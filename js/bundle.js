@@ -14,15 +14,15 @@
   // =========================================================================
   const COMICS_CATALOG = [
     {
-      id: "the-wish-complete",
-      title: "THE WISH",
+      id: "no-internet-incomplete",
+      title: "NO INTERNET",
       type: "comic",
       genre: "Romance",
       author: "Zkero",
-      description: "Un solo deseo garantizará que nunca más tenga que lamentar una noche. Disfruta de las primeras 15 páginas gratis.",
+      description: "¡Un clásico del cómic rediseñado como nunca lo viste!",
       isPaid: true,
       price: 2.99,
-      previewLimit: 15,
+      previewLimit: 20,
       paymentUrl: "",
       thumbnail: "assets/0.jpg",
       pages: [
