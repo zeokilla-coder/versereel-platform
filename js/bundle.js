@@ -24,6 +24,7 @@
       price: 2.99,
       previewLimit: 20,
       paymentUrl: "https://mpago.la/2om6XKk",
+      paypalUrl: "https://www.paypal.com/invoice/p/#4EV2U6E59BUXU3C6",
       thumbnail: "assets/0.jpg",
       pages: [
         "assets/0.jpg", "assets/1.jpg", "assets/2.jpg", "assets/3.jpg", "assets/4.jpg",
@@ -384,12 +385,19 @@
                         <div class="paywall-icon"><i class="ph-lock"></i></div>
                         <h2 style="color:#fff; font-size:1.4rem; font-weight:800;">Límite de Muestra Gratuita</h2>
                         <p style="color: var(--text-muted); font-size: 0.92rem;">
-                          Has leído las ${previewLimit} páginas gratuitas. ¡Para continuar disfrutando de las ${pages.length} páginas de este cómic, realiza tu pago a continuación!
+                          Has leído las ${previewLimit} páginas gratuitas. ¡Para continuar disfrutando de las ${pages.length} páginas de este cómic, elige tu método de pago preferido!
                         </p>
-                        <div class="paywall-price">$${item.price.toFixed(2)}</div>
-                        <button class="btn-primary" id="paywall-unlock-btn" style="width: 100%; justify-content: center; font-size: 1.05rem; padding: 0.9rem;">
-                          <i class="ph-credit-card"></i> ${item.paymentUrl ? 'Ir a Pagar $' + item.price.toFixed(2) : 'Desbloquear Cómic ($' + item.price.toFixed(2) + ')'}
-                        </button>
+                        <div class="paywall-price">$${item.price.toFixed(2)} USD</div>
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem; width: 100%; margin-top: 0.5rem;">
+                          <button class="btn-primary" id="paywall-unlock-btn" style="width: 100%; justify-content: center; font-size: 1rem; padding: 0.85rem; background: linear-gradient(135deg, #009ee3, #0070ba); border: none; font-weight: 700;">
+                            <i class="ph-credit-card"></i> Pagar con MercadoPago (Yape / Plin / Tarjetas)
+                          </button>
+                          ${(item.paypalUrl || item.paypalLink) ? `
+                            <button class="btn-secondary" id="paywall-paypal-btn" style="width: 100%; justify-content: center; font-size: 1rem; padding: 0.85rem; background: #003087; color: #ffffff; border: 1px solid #0070ba; font-weight: 700;">
+                              <i class="ph-paypal-logo"></i> Pagar con PayPal (Internacional / Dólares)
+                            </button>
+                          ` : ''}
+                        </div>
                       </div>
                     `;
                   }
@@ -414,12 +422,19 @@
                 <div class="paywall-icon"><i class="ph-lock"></i></div>
                 <h2 style="color:#fff; font-size:1.4rem; font-weight:800;">Límite de Muestra Gratuita</h2>
                 <p style="color: var(--text-muted); font-size: 0.92rem;">
-                  Has leído las ${previewLimit} páginas gratuitas. ¡Para continuar leyendo las ${pages.length} páginas, realiza tu pago a continuación!
+                  Has leído las ${previewLimit} páginas gratuitas. ¡Para continuar leyendo las ${pages.length} páginas de este cómic, elige tu método de pago preferido!
                 </p>
-                <div class="paywall-price">$${item.price.toFixed(2)}</div>
-                <button class="btn-primary" id="paywall-unlock-btn" style="width: 100%; justify-content: center; font-size: 1.05rem; padding: 0.9rem;">
-                  <i class="ph-credit-card"></i> ${item.paymentUrl ? 'Ir a Pagar $' + item.price.toFixed(2) : 'Desbloquear Cómic ($' + item.price.toFixed(2) + ')'}
-                </button>
+                <div class="paywall-price">$${item.price.toFixed(2)} USD</div>
+                <div style="display: flex; flex-direction: column; gap: 0.75rem; width: 100%; margin-top: 0.5rem;">
+                  <button class="btn-primary" id="paywall-unlock-btn" style="width: 100%; justify-content: center; font-size: 1rem; padding: 0.85rem; background: linear-gradient(135deg, #009ee3, #0070ba); border: none; font-weight: 700;">
+                    <i class="ph-credit-card"></i> Pagar con MercadoPago (Yape / Plin / Tarjetas)
+                  </button>
+                  ${(item.paypalUrl || item.paypalLink) ? `
+                    <button class="btn-secondary" id="paywall-paypal-btn" style="width: 100%; justify-content: center; font-size: 1rem; padding: 0.85rem; background: #003087; color: #ffffff; border: 1px solid #0070ba; font-weight: 700;">
+                      <i class="ph-paypal-logo"></i> Pagar con PayPal (Internacional / Dólares)
+                    </button>
+                  ` : ''}
+                </div>
               </div>
             ` : `
               <img src="${pages[currentPageIndex]}" class="single-page-img" id="single-page-img" alt="Página ${currentPageIndex + 1}" />
@@ -511,6 +526,20 @@
 
           if (item.paymentUrl) {
             window.open(item.paymentUrl, '_blank');
+          }
+        };
+      }
+
+      const paypalBtn = overlay.querySelector('#paywall-paypal-btn');
+      if (paypalBtn) {
+        paypalBtn.onclick = () => {
+          try {
+            localStorage.setItem('pending_unlock_comic', item.id);
+          } catch (e) {}
+
+          const paypalUri = item.paypalUrl || item.paypalLink;
+          if (paypalUri) {
+            window.open(paypalUri, '_blank');
           }
         };
       }
