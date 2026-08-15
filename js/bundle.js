@@ -8,6 +8,15 @@
   const DB_VERSION = 1;
   const STORE_NAME = 'app_state';
 
+  // =========================================================================
+  // 📚 CATÁLOGO OFICIAL DE CÓMICS DE VERSEREEL
+  // ¡PEGA TUS NUEVOS CÓMICS AQUÍ ABAJO DENTRO DE LOS CORCHETES [ ... ]!
+  // =========================================================================
+  const COMICS_CATALOG = [
+    // ⬇️ PEGA TUS CÓMICS AQUÍ ABAJO (SEPARADOS POR UNA COMA ,) ⬇️
+    
+  ];
+
   function openDB() {
     return new Promise((resolve, reject) => {
       const request = indexedDB.open(DB_NAME, DB_VERSION);
@@ -63,7 +72,7 @@
       totalViews: 0,
       subscribers: 0
     },
-    items: []
+    items: [...COMICS_CATALOG]
   };
 
   class Store {
@@ -75,9 +84,19 @@
 
     async initAsyncStorage() {
       const saved = await loadFromDB(STORAGE_KEY);
-      if (saved) {
+      if (saved && saved.items) {
         this.data = { ...INITIAL_DATA, ...saved };
+        // Sync catalog items
+        COMICS_CATALOG.forEach(catItem => {
+          if (!this.data.items.some(i => i.id === catItem.id)) {
+            this.data.items.push(catItem);
+          }
+        });
       } else {
+        this.data = { ...INITIAL_DATA, items: [...COMICS_CATALOG] };
+      }
+      this.notify();
+    }
         const raw = localStorage.getItem(STORAGE_KEY);
         if (raw) {
           try {
