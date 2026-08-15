@@ -1037,32 +1037,38 @@ body {
 }
 
 /* Fullpage Dedicated Mobile-Optimized Reader Screen */
+/* Fullpage Dedicated Mobile-Optimized Reader Screen */
 .fullpage-reader {
   position: fixed;
-  inset: 0;
-  z-index: 9999;
-  background: #06070c;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  z-index: 99999 !important;
+  background: #040508;
   color: #fff;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 .reader-navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  position: relative !important;
   height: 56px;
-  background: rgba(9, 10, 16, 0.96);
+  min-height: 56px;
+  width: 100%;
+  background: rgba(9, 10, 16, 0.98);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 1rem;
-  z-index: 10010 !important;
-  pointer-events: auto !important;
+  z-index: 100;
+  flex-shrink: 0;
+  box-sizing: border-box;
 }
 
 .reader-title-area {
@@ -1070,15 +1076,10 @@ body {
   align-items: center;
   gap: 0.75rem;
   overflow: hidden;
-  position: relative;
-  z-index: 10012;
 }
 
 #back-to-catalog-btn {
-  position: relative;
-  z-index: 10015 !important;
   cursor: pointer !important;
-  pointer-events: auto !important;
 }
 
 .reader-comic-title {
@@ -1096,8 +1097,6 @@ body {
   padding: 3px;
   border-radius: var(--radius-full);
   border: 1px solid var(--border-color);
-  position: relative;
-  z-index: 10012;
 }
 
 .mode-toggle-btn {
@@ -1109,13 +1108,10 @@ body {
   color: var(--text-muted);
   border-radius: var(--radius-full);
   cursor: pointer !important;
-  pointer-events: auto !important;
   display: flex;
   align-items: center;
   gap: 0.35rem;
   transition: all 0.2s ease;
-  position: relative;
-  z-index: 10015 !important;
 }
 
 .mode-toggle-btn.active {
@@ -1126,19 +1122,20 @@ body {
 
 /* Webtoon Continuous Vertical Scroll Stream */
 .webtoon-scroll-container {
-  flex: 1;
-  overflow-y: auto;
+  flex: 1 1 auto;
+  height: calc(100dvh - 116px);
+  max-height: calc(100dvh - 116px);
+  overflow-y: scroll !important;
   overflow-x: hidden;
-  padding-top: 66px;
-  padding-bottom: 75px;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   display: flex;
   flex-direction: column;
   align-items: center;
   background: #040508;
-  z-index: 1;
-  pointer-events: auto !important;
+  padding: 1rem 0;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .webtoon-page-wrapper {
@@ -1163,22 +1160,22 @@ body {
 
 /* Paginado Single Page View */
 .single-page-container {
-  flex: 1;
-  padding-top: 66px;
-  padding-bottom: 75px;
+  flex: 1 1 auto;
+  height: calc(100dvh - 116px);
+  max-height: calc(100dvh - 116px);
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: auto;
-  position: relative;
+  overflow: auto !important;
+  background: #040508;
+  padding: 1rem;
+  box-sizing: border-box;
   width: 100%;
-  z-index: 1;
-  pointer-events: auto !important;
 }
 
 .single-page-img {
   max-width: 100%;
-  max-height: calc(100vh - 140px);
+  max-height: calc(100dvh - 140px);
   object-fit: contain;
   border-radius: 4px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
@@ -1187,26 +1184,26 @@ body {
 
 /* Floating Ergonomic Bottom Toolbar */
 .reader-bottom-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  position: relative !important;
   height: 60px;
-  background: rgba(9, 10, 16, 0.96);
+  min-height: 60px;
+  width: 100%;
+  background: rgba(9, 10, 16, 0.98);
   backdrop-filter: blur(12px);
   border-top: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 1.25rem;
-  z-index: 10010 !important;
-  pointer-events: auto !important;
+  z-index: 100;
+  flex-shrink: 0;
+  box-sizing: border-box;
 }
 
 @media (max-width: 640px) {
   .reader-comic-title {
-    max-width: 140px;
-    font-size: 0.85rem;
+    max-width: 130px;
+    font-size: 0.82rem;
   }
   .webtoon-page-wrapper {
     max-width: 100%;
