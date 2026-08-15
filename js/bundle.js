@@ -457,6 +457,9 @@
 
       // Attach event listeners
       const closeOverlay = () => {
+        if (window.location.search.includes('comic=')) {
+          history.pushState({}, '', window.location.pathname);
+        }
         overlay.remove();
       };
 
@@ -570,6 +573,9 @@
 
     renderReader();
     document.body.appendChild(overlay);
+    if (!window.location.search.includes('comic=' + item.id)) {
+      history.pushState({}, '', '?comic=' + item.id);
+    }
     store.incrementViews(item.id);
   }
 
@@ -1439,9 +1445,6 @@
             <div class="hero-actions">
               <button class="btn-primary" id="hero-explore-btn">
                 <i class="ph-compass"></i> Explorar Catálogo
-              </button>
-              <button class="btn-secondary" id="hero-creator-btn">
-                <i class="ph-lock-key"></i> Acceso Creador (Admin)
               </button>
             </div>
           </div>

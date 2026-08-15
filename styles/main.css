@@ -1136,6 +1136,28 @@ body {
   padding: 1rem 0;
   box-sizing: border-box;
   width: 100%;
+  scrollbar-width: auto;
+  scrollbar-color: var(--primary) #06070e;
+}
+
+.webtoon-scroll-container::-webkit-scrollbar {
+  width: 14px !important;
+}
+
+.webtoon-scroll-container::-webkit-scrollbar-track {
+  background: #06070e !important;
+  border-left: 1px solid var(--border-color) !important;
+}
+
+.webtoon-scroll-container::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--primary), var(--cyan)) !important;
+  border-radius: 7px !important;
+  border: 3px solid #06070e !important;
+  cursor: grab !important;
+}
+
+.webtoon-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #ffffff !important;
 }
 
 .webtoon-page-wrapper {
