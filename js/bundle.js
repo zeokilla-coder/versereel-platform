@@ -1484,7 +1484,15 @@
     renderAudienceHub() {
       const items = store.getItems();
       
-      const filtered = items.filter(item => {
+      const uniqueMap = new Map();
+      items.forEach(item => {
+        if (item && item.title && !uniqueMap.has(item.title)) {
+          uniqueMap.set(item.title, item);
+        }
+      });
+      const uniqueItems = Array.from(uniqueMap.values());
+
+      const filtered = uniqueItems.filter(item => {
         if (this.selectedMediaType !== 'all' && item.type !== this.selectedMediaType) return false;
         if (this.selectedAccessTier === 'free' && item.isPaid) return false;
         if (this.selectedAccessTier === 'paid' && !item.isPaid) return false;
