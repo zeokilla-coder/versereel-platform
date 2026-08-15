@@ -2,9 +2,21 @@
 (function() {
   'use strict';
 
+  // Automatic Legacy Cache Purger
+  try {
+    localStorage.removeItem('versereel_storage');
+    localStorage.removeItem('versereel_data');
+    localStorage.removeItem('versereel_data_v2');
+    localStorage.removeItem('versereel_data_v3');
+    if (window.indexedDB) {
+      window.indexedDB.deleteDatabase('VerseReelDB');
+      window.indexedDB.deleteDatabase('versereel_db');
+    }
+  } catch (e) {}
+
   // 1. Data Layer & IndexedDB Store
-  const STORAGE_KEY = 'versereel_data_v3';
-  const DB_NAME = 'VerseReelDB';
+  const STORAGE_KEY = 'versereel_data_v99';
+  const DB_NAME = 'VerseReelDB_v99';
   const DB_VERSION = 1;
   const STORE_NAME = 'app_state';
 
