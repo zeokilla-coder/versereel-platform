@@ -1054,15 +1054,15 @@ body {
   left: 0;
   right: 0;
   height: 56px;
-  background: rgba(9, 10, 16, 0.94);
+  background: rgba(9, 10, 16, 0.96);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 1rem;
-  z-index: 1000;
-  transition: transform 0.3s ease;
+  z-index: 10010 !important;
+  pointer-events: auto !important;
 }
 
 .reader-title-area {
@@ -1070,6 +1070,15 @@ body {
   align-items: center;
   gap: 0.75rem;
   overflow: hidden;
+  position: relative;
+  z-index: 10012;
+}
+
+#back-to-catalog-btn {
+  position: relative;
+  z-index: 10015 !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
 }
 
 .reader-comic-title {
@@ -1087,6 +1096,8 @@ body {
   padding: 3px;
   border-radius: var(--radius-full);
   border: 1px solid var(--border-color);
+  position: relative;
+  z-index: 10012;
 }
 
 .mode-toggle-btn {
@@ -1097,11 +1108,14 @@ body {
   background: transparent;
   color: var(--text-muted);
   border-radius: var(--radius-full);
-  cursor: pointer;
+  cursor: pointer !important;
+  pointer-events: auto !important;
   display: flex;
   align-items: center;
   gap: 0.35rem;
   transition: all 0.2s ease;
+  position: relative;
+  z-index: 10015 !important;
 }
 
 .mode-toggle-btn.active {
@@ -1115,14 +1129,16 @@ body {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-top: 56px;
-  padding-bottom: 70px;
+  padding-top: 66px;
+  padding-bottom: 75px;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   display: flex;
   flex-direction: column;
   align-items: center;
   background: #040508;
+  z-index: 1;
+  pointer-events: auto !important;
 }
 
 .webtoon-page-wrapper {
@@ -1148,19 +1164,21 @@ body {
 /* Paginado Single Page View */
 .single-page-container {
   flex: 1;
-  padding-top: 56px;
-  padding-bottom: 70px;
+  padding-top: 66px;
+  padding-bottom: 75px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: auto;
   position: relative;
   width: 100%;
+  z-index: 1;
+  pointer-events: auto !important;
 }
 
 .single-page-img {
   max-width: 100%;
-  max-height: calc(100vh - 130px);
+  max-height: calc(100vh - 140px);
   object-fit: contain;
   border-radius: 4px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
@@ -1174,14 +1192,15 @@ body {
   left: 0;
   right: 0;
   height: 60px;
-  background: rgba(9, 10, 16, 0.95);
+  background: rgba(9, 10, 16, 0.96);
   backdrop-filter: blur(12px);
   border-top: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 1.25rem;
-  z-index: 1000;
+  z-index: 10010 !important;
+  pointer-events: auto !important;
 }
 
 @media (max-width: 640px) {

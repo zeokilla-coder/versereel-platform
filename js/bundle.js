@@ -445,13 +445,20 @@
       `;
 
       // Attach event listeners
-      viewEl.querySelector('#back-to-catalog-btn').onclick = () => {
-        if (onBackToCatalog) onBackToCatalog();
-      };
+      const backBtn = viewEl.querySelector('#back-to-catalog-btn');
+      if (backBtn) {
+        backBtn.onclick = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (onBackToCatalog) onBackToCatalog();
+        };
+      }
 
       const modeWebtoonBtn = viewEl.querySelector('#mode-webtoon-btn');
       if (modeWebtoonBtn) {
-        modeWebtoonBtn.onclick = () => {
+        modeWebtoonBtn.onclick = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
           readerMode = 'webtoon';
           renderReader();
         };
@@ -459,7 +466,9 @@
 
       const modeSingleBtn = viewEl.querySelector('#mode-single-btn');
       if (modeSingleBtn) {
-        modeSingleBtn.onclick = () => {
+        modeSingleBtn.onclick = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
           readerMode = 'single';
           renderReader();
         };
