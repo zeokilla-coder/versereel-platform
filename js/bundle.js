@@ -390,12 +390,6 @@
                         <button class="btn-primary" id="paywall-unlock-btn" style="width: 100%; justify-content: center; font-size: 1.05rem; padding: 0.9rem;">
                           <i class="ph-credit-card"></i> ${item.paymentUrl ? 'Ir a Pagar $' + item.price.toFixed(2) : 'Desbloquear Cómic ($' + item.price.toFixed(2) + ')'}
                         </button>
-                        <div id="payment-confirm-box" style="display: none; width: 100%; margin-top: 0.75rem; background: rgba(16, 185, 129, 0.12); border: 1px solid var(--emerald); padding: 1rem; border-radius: var(--radius-md); text-align: center;">
-                          <p style="color: #34d399; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem;">¿Ya realizaste tu pago en la pasarela?</p>
-                          <button class="btn-secondary" id="confirm-unlock-btn" style="width: 100%; justify-content: center; border-color: var(--emerald); color: #34d399;">
-                            <i class="ph-check-circle"></i> Confirmar Pago y Continuar
-                          </button>
-                        </div>
                       </div>
                     `;
                   }
@@ -426,12 +420,6 @@
                 <button class="btn-primary" id="paywall-unlock-btn" style="width: 100%; justify-content: center; font-size: 1.05rem; padding: 0.9rem;">
                   <i class="ph-credit-card"></i> ${item.paymentUrl ? 'Ir a Pagar $' + item.price.toFixed(2) : 'Desbloquear Cómic ($' + item.price.toFixed(2) + ')'}
                 </button>
-                <div id="payment-confirm-box" style="display: none; width: 100%; margin-top: 0.75rem; background: rgba(16, 185, 129, 0.12); border: 1px solid var(--emerald); padding: 1rem; border-radius: var(--radius-md); text-align: center;">
-                  <p style="color: #34d399; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem;">¿Ya realizaste tu pago en la pasarela?</p>
-                  <button class="btn-secondary" id="confirm-unlock-btn" style="width: 100%; justify-content: center; border-color: var(--emerald); color: #34d399;">
-                    <i class="ph-check-circle"></i> Confirmar Pago y Continuar
-                  </button>
-                </div>
               </div>
             ` : `
               <img src="${pages[currentPageIndex]}" class="single-page-img" id="single-page-img" alt="Página ${currentPageIndex + 1}" />
@@ -523,20 +511,7 @@
 
           if (item.paymentUrl) {
             window.open(item.paymentUrl, '_blank');
-            const confirmBox = overlay.querySelector('#payment-confirm-box');
-            if (confirmBox) confirmBox.style.display = 'block';
-          } else {
-            const res = store.unlockItem(item.id);
-            if (res.success) renderReader();
           }
-        };
-      }
-
-      const confirmBtn = overlay.querySelector('#confirm-unlock-btn');
-      if (confirmBtn) {
-        confirmBtn.onclick = () => {
-          const res = store.unlockItem(item.id);
-          if (res.success) renderReader();
         };
       }
 
