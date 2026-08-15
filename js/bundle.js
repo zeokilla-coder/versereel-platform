@@ -13,8 +13,30 @@
   // ¡PEGA TUS NUEVOS CÓMICS AQUÍ ABAJO DENTRO DE LOS CORCHETES [ ... ]!
   // =========================================================================
   const COMICS_CATALOG = [
-    // ⬇️ PEGA TUS CÓMICS AQUÍ ABAJO (SEPARADOS POR UNA COMA ,) ⬇️
-    
+    {
+      id: "the-wish-complete",
+      title: "THE WISH",
+      type: "comic",
+      genre: "Romance",
+      author: "Zkero",
+      description: "Un solo deseo garantizará que nunca más tenga que lamentar una noche. Disfruta de las primeras 15 páginas gratis.",
+      isPaid: true,
+      price: 2.99,
+      previewLimit: 15,
+      paymentUrl: "",
+      thumbnail: "assets/0.jpg",
+      pages: [
+        "assets/0.jpg", "assets/1.jpg", "assets/2.jpg", "assets/3.jpg", "assets/4.jpg",
+        "assets/5.jpg", "assets/6.jpg", "assets/7.jpg", "assets/8.jpg", "assets/9.jpg",
+        "assets/10.jpg", "assets/11.jpg", "assets/12.jpg", "assets/13.jpg", "assets/14.jpg",
+        "assets/15.jpg", "assets/16.jpg", "assets/17.jpg", "assets/18.jpg", "assets/19.jpg",
+        "assets/20.jpg", "assets/21.jpg", "assets/22.jpg", "assets/23.jpg", "assets/24.jpg",
+        "assets/25.jpg", "assets/26.jpg", "assets/27.jpg", "assets/28.jpg", "assets/29.jpg",
+        "assets/30.jpg"
+      ],
+      views: 142,
+      createdAt: new Date().toISOString()
+    }
   ];
 
   function openDB() {
