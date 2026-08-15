@@ -1,0 +1,6 @@
+# Dependencies & OS
+.DS_Store
+Thumbs.db
+node_modules/
+*.log
+__pycache__/
