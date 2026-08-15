@@ -169,7 +169,16 @@
     }
 
     getItems() {
-      return this.data.items || [];
+      if (!this.data.items) this.data.items = [];
+      COMICS_CATALOG.forEach(catItem => {
+        const idx = this.data.items.findIndex(i => i.id === catItem.id || i.title === catItem.title);
+        if (idx !== -1) {
+          this.data.items[idx] = { ...this.data.items[idx], ...catItem };
+        } else {
+          this.data.items.unshift(catItem);
+        }
+      });
+      return this.data.items;
     }
 
     isItemUnlocked(itemId) {
@@ -1356,7 +1365,12 @@
 
     checkUrlParams() {
       const params = new URLSearchParams(window.location.search);
-      const comicId = params.get('comic') || params.get('unlock') || params.get('external_reference');
+      const comicParam = (
+        params.get('comic') || 
+        params.get('unlock') || 
+        params.get('id') || 
+        params.get('external_reference')
+      );
       const status = (
         params.get('status') || 
         params.get('collection_status') || 
@@ -1365,39 +1379,42 @@
         params.get('payment')
       );
 
-      if (comicId) {
-        // Auto-Verification of Approved Payment Return (MercadoPago / PayPal / Stripe)
+      if (comicParam) {
         const isApproved = status === 'approved' || status === 'success' || status === 'APPROVED' || params.has('approved') || params.get('payment_id');
         
-        if (isApproved) {
-          const res = store.unlockItem(comicId);
-          if (res.success) {
-            setTimeout(() => {
+        const openDirectComic = () => {
+          const items = store.getItems();
+          const norm = comicParam.toLowerCase().trim();
+          const item = items.find(i => 
+            i.id === comicParam || 
+            i.id.toLowerCase() === norm ||
+            i.id.toLowerCase().includes(norm) ||
+            norm.includes(i.id.toLowerCase()) ||
+            i.title.toLowerCase().replace(/\s+/g, '-') === norm ||
+            i.title.toLowerCase().includes(norm.replace(/-/g, ' '))
+          ) || items[0];
+
+          if (item) {
+            if (isApproved) {
+              store.unlockItem(item.id);
               this.showToast('🎉 ¡Pago verificado exitosamente por Mercado Pago! Disfruta de la lectura completa.');
-            }, 500);
-          }
-        }
-
-        const normalizedId = comicId.toLowerCase().trim();
-        const items = store.getItems();
-        const item = items.find(i => 
-          i.id === comicId || 
-          i.id.toLowerCase() === normalizedId ||
-          i.id.toLowerCase().includes(normalizedId) ||
-          normalizedId.includes(i.id.toLowerCase()) ||
-          i.title.toLowerCase().replace(/\s+/g, '-') === normalizedId ||
-          i.title.toLowerCase().includes(normalizedId.replace(/-/g, ' '))
-        ) || items[0];
-
-        if (item) {
-          setTimeout(() => {
-            if (item.type === 'comic') {
-              openFullpageComicReader(item);
-            } else {
-              createVideoPlayerModal(item, () => this.render());
             }
-          }, 300);
-        }
+
+            if (!document.getElementById('fullpage-comic-reader-overlay')) {
+              if (item.type === 'comic') {
+                openFullpageComicReader(item);
+              } else {
+                createVideoPlayerModal(item, () => this.render());
+              }
+            }
+          }
+        };
+
+        // Open immediately
+        openDirectComic();
+        // Fallback retry timers to defeat any async IndexedDB load race conditions
+        setTimeout(openDirectComic, 150);
+        setTimeout(openDirectComic, 600);
       }
     }
 
