@@ -23,7 +23,7 @@
       isPaid: true,
       price: 2.99,
       previewLimit: 20,
-      paymentUrl: "",
+      paymentUrl: "https://mpago.la/2om6XKk",
       thumbnail: "assets/0.jpg",
       pages: [
         "assets/0.jpg", "assets/1.jpg", "assets/2.jpg", "assets/3.jpg", "assets/4.jpg",
@@ -517,6 +517,10 @@
       const unlockBtn = overlay.querySelector('#paywall-unlock-btn');
       if (unlockBtn) {
         unlockBtn.onclick = () => {
+          try {
+            localStorage.setItem('pending_unlock_comic', item.id);
+          } catch (e) {}
+
           if (item.paymentUrl) {
             window.open(item.paymentUrl, '_blank');
             const confirmBox = overlay.querySelector('#payment-confirm-box');
@@ -1365,11 +1369,17 @@
 
     checkUrlParams() {
       const params = new URLSearchParams(window.location.search);
+      let pendingId = null;
+      try {
+        pendingId = localStorage.getItem('pending_unlock_comic');
+      } catch (e) {}
+
       const comicParam = (
         params.get('comic') || 
         params.get('unlock') || 
         params.get('id') || 
-        params.get('external_reference')
+        params.get('external_reference') ||
+        (params.has('status') || params.has('collection_status') ? pendingId : null)
       );
       const status = (
         params.get('status') || 
@@ -1379,14 +1389,15 @@
         params.get('payment')
       );
 
-      if (comicParam) {
+      if (comicParam || pendingId) {
+        const targetSearch = comicParam || pendingId;
         const isApproved = status === 'approved' || status === 'success' || status === 'APPROVED' || params.has('approved') || params.get('payment_id');
         
         const openDirectComic = () => {
           const items = store.getItems();
-          const norm = comicParam.toLowerCase().trim();
+          const norm = targetSearch.toLowerCase().trim();
           const item = items.find(i => 
-            i.id === comicParam || 
+            i.id === targetSearch || 
             i.id.toLowerCase() === norm ||
             i.id.toLowerCase().includes(norm) ||
             norm.includes(i.id.toLowerCase()) ||
@@ -1397,6 +1408,7 @@
           if (item) {
             if (isApproved) {
               store.unlockItem(item.id);
+              try { localStorage.removeItem('pending_unlock_comic'); } catch (e) {}
               this.showToast('🎉 ¡Pago verificado exitosamente por Mercado Pago! Disfruta de la lectura completa.');
             }
 
