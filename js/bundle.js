@@ -390,11 +390,11 @@
                         <div class="paywall-price">$${item.price.toFixed(2)} USD</div>
                         <div style="display: flex; flex-direction: column; gap: 0.75rem; width: 100%; margin-top: 0.5rem;">
                           <button class="btn-primary" id="paywall-unlock-btn" style="width: 100%; justify-content: center; font-size: 1rem; padding: 0.85rem; background: linear-gradient(135deg, #009ee3, #0070ba); border: none; font-weight: 700;">
-                            <i class="ph-credit-card"></i> Pagar con MercadoPago (Yape / Plin / Tarjetas)
+                            <i class="ph-credit-card"></i> Pagar con MercadoPago (Yape / Plin / Tarjeta Débito/Crédito)
                           </button>
                           ${(item.paypalUrl || item.paypalLink) ? `
                             <button class="btn-secondary" id="paywall-paypal-btn" style="width: 100%; justify-content: center; font-size: 1rem; padding: 0.85rem; background: #003087; color: #ffffff; border: 1px solid #0070ba; font-weight: 700;">
-                              <i class="ph-paypal-logo"></i> Pagar con PayPal (Internacional / Dólares)
+                              <i class="ph-paypal-logo"></i> Pagar con PayPal (Tarjeta Débito/Crédito)
                             </button>
                           ` : ''}
                         </div>
@@ -427,11 +427,11 @@
                 <div class="paywall-price">$${item.price.toFixed(2)} USD</div>
                 <div style="display: flex; flex-direction: column; gap: 0.75rem; width: 100%; margin-top: 0.5rem;">
                   <button class="btn-primary" id="paywall-unlock-btn" style="width: 100%; justify-content: center; font-size: 1rem; padding: 0.85rem; background: linear-gradient(135deg, #009ee3, #0070ba); border: none; font-weight: 700;">
-                    <i class="ph-credit-card"></i> Pagar con MercadoPago (Yape / Plin / Tarjetas)
+                    <i class="ph-credit-card"></i> Pagar con MercadoPago (Yape / Plin / Tarjeta Débito/Crédito)
                   </button>
                   ${(item.paypalUrl || item.paypalLink) ? `
                     <button class="btn-secondary" id="paywall-paypal-btn" style="width: 100%; justify-content: center; font-size: 1rem; padding: 0.85rem; background: #003087; color: #ffffff; border: 1px solid #0070ba; font-weight: 700;">
-                      <i class="ph-paypal-logo"></i> Pagar con PayPal (Internacional / Dólares)
+                      <i class="ph-paypal-logo"></i> Pagar con PayPal (Tarjeta Débito/Crédito)
                     </button>
                   ` : ''}
                 </div>
