@@ -14,7 +14,7 @@
   // =========================================================================
   const COMICS_CATALOG = [
     {
-      id: "no-internet-incomplete",
+      id: "no-internet",
       title: "NO INTERNET",
       type: "comic",
       genre: "Romance",
@@ -1378,7 +1378,17 @@
           }
         }
 
-        const item = store.getItems().find(i => i.id === comicId);
+        const normalizedId = comicId.toLowerCase().trim();
+        const items = store.getItems();
+        const item = items.find(i => 
+          i.id === comicId || 
+          i.id.toLowerCase() === normalizedId ||
+          i.id.toLowerCase().includes(normalizedId) ||
+          normalizedId.includes(i.id.toLowerCase()) ||
+          i.title.toLowerCase().replace(/\s+/g, '-') === normalizedId ||
+          i.title.toLowerCase().includes(normalizedId.replace(/-/g, ' '))
+        ) || items[0];
+
         if (item) {
           setTimeout(() => {
             if (item.type === 'comic') {
