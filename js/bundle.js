@@ -343,6 +343,12 @@
           </div>
 
           <div style="display: flex; align-items: center; gap: 0.5rem;">
+            ${!isLocked ? `
+              <a href="${item.downloadUrl || 'https://res.cloudinary.com/bre5du5y/image/upload/fl_attachment/0.jpg'}" download target="_blank" class="btn-secondary" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid var(--emerald); font-size: 0.82rem; padding: 0.4rem 0.75rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem; font-weight: 700; border-radius: var(--radius-md);" title="Descargar Cómic Completo HD">
+                <i class="ph-download-simple"></i> Descargar HD
+              </a>
+            ` : ''}
+
             <!-- Mode Switcher Pill -->
             <div class="mode-toggle-pill">
               <button type="button" class="mode-toggle-btn ${readerMode === 'webtoon' ? 'active' : ''}" id="mode-webtoon-btn">
@@ -396,6 +402,20 @@
                       Pág ${idx + 1}
                     </div>
                   </div>
+                  ${!isLocked && idx === pages.length - 1 ? `
+                    <div style="width: 90%; max-width: 600px; margin: 3rem auto 2rem auto; background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(6,182,212,0.15)); border: 1px solid var(--emerald); border-radius: var(--radius-lg); padding: 2rem 1rem; text-align: center; box-sizing: border-box;">
+                      <div style="width: 50px; height: 50px; border-radius: 50%; background: rgba(16,185,129,0.2); color: #34d399; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; margin: 0 auto 1rem auto;">
+                        <i class="ph-check-circle"></i>
+                      </div>
+                      <h3 style="color: #fff; font-size: 1.3rem; font-weight: 800; margin-bottom: 0.5rem;">¡Gracias por comprar "${item.title}"!</h3>
+                      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.25rem;">
+                        Has disfrutado de las ${pages.length} páginas. Puedes guardar tu copia HD en tu dispositivo.
+                      </p>
+                      <a href="${item.downloadUrl || 'https://res.cloudinary.com/bre5du5y/image/upload/fl_attachment/0.jpg'}" download target="_blank" class="btn-primary" style="display: inline-flex; justify-content: center; background: linear-gradient(135deg, #10b981, #06b6d4); text-decoration: none; padding: 0.85rem 1.5rem; font-size: 1rem; font-weight: 700; border: none;">
+                        <i class="ph-download-simple"></i> Descargar Cómic Completo (HD)
+                      </a>
+                    </div>
+                  ` : ''}
                 `;
               }).join('')}
             </div>
