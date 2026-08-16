@@ -38,8 +38,8 @@
       paymentUrl: "https://mpago.la/2om6XKk",
       paypalUrl: "https://www.paypal.com/invoice/p/#4EV2U6E59BUXU3C6",
       downloadUrl: "https://res.cloudinary.com/bre5du5y/image/upload/fl_attachment/NO_INTERNET.pdf",
-      thumbnail: "https://res.cloudinary.com/bre5du5y/image/upload/f_auto,q_auto/0.jpg",
-      pages: Array.from({ length: 31 }, (_, i) => `https://res.cloudinary.com/bre5du5y/image/upload/f_auto,q_auto/${i}.jpg`),
+      thumbnail: "assets/0.jpg",
+      pages: Array.from({ length: 31 }, (_, i) => `assets/${i}.jpg`),
       views: 142,
       createdAt: new Date().toISOString()
     }
