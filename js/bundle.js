@@ -37,7 +37,7 @@
       previewLimit: 20,
       paymentUrl: "https://mpago.la/2om6XKk",
       paypalUrl: "https://www.paypal.com/invoice/p/#4EV2U6E59BUXU3C6",
-      downloadUrl: "assets/NO_INTERNET.pdf",
+      downloadUrl: "assets/NO INTERNET.pdf",
       thumbnail: "assets/0.jpg",
       pages: Array.from({ length: 31 }, (_, i) => `assets/${i}.jpg`),
       views: 142,
