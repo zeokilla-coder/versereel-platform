@@ -28,6 +28,7 @@
     {
       id: "lemonade",
       title: "LEMONADE",
+      language: "en",
       type: "comic",
       genre: "Romance",
       author: "Zkero",
@@ -350,21 +351,44 @@
 
     function renderReader() {
       const isLocked = item.isPaid && !store.isItemUnlocked(item.id);
+      const isEn = item.language === 'en';
+
+      const txtCatalog = isEn ? 'Catalog' : 'Catálogo';
+      const txtDownloadHd = isEn ? 'Download HD' : 'Descargar HD';
+      const txtPaywallTitle = isEn ? 'Free Preview Limit' : 'Límite de Muestra Gratuita';
+      const txtPaywallDesc = isEn
+        ? `You have read the ${previewLimit} free preview pages. To continue enjoying all ${pages.length} pages of this comic, select your payment method below!`
+        : `Has leído las ${previewLimit} páginas gratuitas. ¡Para continuar disfrutando de las ${pages.length} páginas de este cómic, elige tu método de pago preferido!`;
+      const txtPaypalBtn = isEn
+        ? '<i class="ph-paypal-logo"></i> Pay with PayPal (Credit / Debit Card)'
+        : '<i class="ph-paypal-logo"></i> Pagar con PayPal (Tarjeta Débito/Crédito)';
+      const txtMpBtn = isEn
+        ? '<i class="ph-credit-card"></i> Pay with MercadoPago (Cards / Local)'
+        : '<i class="ph-credit-card"></i> Pagar con MercadoPago (Yape / Plin / Tarjeta Débito/Crédito)';
+      const txtThanksTitle = isEn
+        ? `Thank you for buying "${item.title}"!`
+        : `¡Gracias por comprar "${item.title}"!`;
+      const txtThanksDesc = isEn
+        ? `You have enjoyed all ${pages.length} pages. You can save your HD copy to your device.`
+        : `Has disfrutado de las ${pages.length} páginas. Puedes guardar tu copia HD en tu dispositivo.`;
+      const txtDownloadFull = isEn
+        ? 'Download Full Comic (HD)'
+        : 'Descargar Cómic Completo (HD)';
 
       overlay.innerHTML = `
         <!-- Top Navbar -->
         <header class="reader-navbar">
           <div class="reader-title-area">
             <button class="btn-secondary" id="back-to-catalog-btn" style="padding: 0.4rem 0.85rem; font-size: 0.88rem; font-weight: 700; border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.1);">
-              <i class="ph-caret-left-bold"></i> Catálogo
+              <i class="ph-caret-left-bold"></i> ${txtCatalog}
             </button>
             <span class="reader-comic-title">${item.title}</span>
           </div>
 
           <div style="display: flex; align-items: center; gap: 0.5rem;">
             ${!isLocked ? `
-              <a href="${item.downloadUrl || 'https://res.cloudinary.com/bre5du5y/image/upload/fl_attachment/0.jpg'}" download target="_blank" class="btn-secondary" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid var(--emerald); font-size: 0.82rem; padding: 0.4rem 0.75rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem; font-weight: 700; border-radius: var(--radius-md);" title="Descargar Cómic Completo HD">
-                <i class="ph-download-simple"></i> Descargar HD
+              <a href="${item.downloadUrl || 'assets/L00.jpg'}" download target="_blank" class="btn-secondary" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid var(--emerald); font-size: 0.82rem; padding: 0.4rem 0.75rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem; font-weight: 700; border-radius: var(--radius-md);" title="${txtDownloadHd}">
+                <i class="ph-download-simple"></i> ${txtDownloadHd}
               </a>
             ` : ''}
 
@@ -394,20 +418,26 @@
                     return `
                       <div class="paywall-card" style="margin: 3rem 1rem;">
                         <div class="paywall-icon"><i class="ph-lock"></i></div>
-                        <h2 style="color:#fff; font-size:1.4rem; font-weight:800;">Límite de Muestra Gratuita</h2>
+                        <h2 style="color:#fff; font-size:1.4rem; font-weight:800;">${txtPaywallTitle}</h2>
                         <p style="color: var(--text-muted); font-size: 0.92rem;">
-                          Has leído las ${previewLimit} páginas gratuitas. ¡Para continuar disfrutando de las ${pages.length} páginas de este cómic, elige tu método de pago preferido!
+                          ${txtPaywallDesc}
                         </p>
                         <div class="paywall-price">$${item.price.toFixed(2)} USD</div>
                         <div style="display: flex; flex-direction: column; gap: 0.75rem; width: 100%; margin-top: 0.5rem;">
-                          <button class="btn-primary" id="paywall-unlock-btn" style="width: 100%; justify-content: center; font-size: 1rem; padding: 0.85rem; background: linear-gradient(135deg, #009ee3, #0070ba); border: none; font-weight: 700;">
-                            <i class="ph-credit-card"></i> Pagar con MercadoPago (Yape / Plin / Tarjeta Débito/Crédito)
-                          </button>
-                          ${(item.paypalUrl || item.paypalLink) ? `
-                            <button class="btn-secondary" id="paywall-paypal-btn" style="width: 100%; justify-content: center; font-size: 1rem; padding: 0.85rem; background: #003087; color: #ffffff; border: 1px solid #0070ba; font-weight: 700;">
-                              <i class="ph-paypal-logo"></i> Pagar con PayPal (Tarjeta Débito/Crédito)
+                          ${isEn ? `
+                            <button class="btn-primary" id="paywall-paypal-btn" style="width: 100%; justify-content: center; font-size: 1rem; padding: 0.85rem; background: linear-gradient(135deg, #003087, #0070ba); color: #ffffff; border: none; font-weight: 700;">
+                              ${txtPaypalBtn}
                             </button>
-                          ` : ''}
+                          ` : `
+                            <button class="btn-primary" id="paywall-unlock-btn" style="width: 100%; justify-content: center; font-size: 1rem; padding: 0.85rem; background: linear-gradient(135deg, #009ee3, #0070ba); border: none; font-weight: 700;">
+                              ${txtMpBtn}
+                            </button>
+                            ${(item.paypalUrl || item.paypalLink) ? `
+                              <button class="btn-secondary" id="paywall-paypal-btn" style="width: 100%; justify-content: center; font-size: 1rem; padding: 0.85rem; background: #003087; color: #ffffff; border: 1px solid #0070ba; font-weight: 700;">
+                                ${txtPaypalBtn}
+                              </button>
+                            ` : ''}
+                          `}
                         </div>
                       </div>
                     `;
@@ -426,12 +456,12 @@
                       <div style="width: 50px; height: 50px; border-radius: 50%; background: rgba(16,185,129,0.2); color: #34d399; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; margin: 0 auto 1rem auto;">
                         <i class="ph-check-circle"></i>
                       </div>
-                      <h3 style="color: #fff; font-size: 1.3rem; font-weight: 800; margin-bottom: 0.5rem;">¡Gracias por comprar "${item.title}"!</h3>
+                      <h3 style="color: #fff; font-size: 1.3rem; font-weight: 800; margin-bottom: 0.5rem;">${txtThanksTitle}</h3>
                       <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.25rem;">
-                        Has disfrutado de las ${pages.length} páginas. Puedes guardar tu copia HD en tu dispositivo.
+                        ${txtThanksDesc}
                       </p>
-                      <a href="${item.downloadUrl || 'https://res.cloudinary.com/bre5du5y/image/upload/fl_attachment/0.jpg'}" download target="_blank" class="btn-primary" style="display: inline-flex; justify-content: center; background: linear-gradient(135deg, #10b981, #06b6d4); text-decoration: none; padding: 0.85rem 1.5rem; font-size: 1rem; font-weight: 700; border: none;">
-                        <i class="ph-download-simple"></i> Descargar Cómic Completo (HD)
+                      <a href="${item.downloadUrl || 'assets/L00.jpg'}" download target="_blank" class="btn-primary" style="display: inline-flex; justify-content: center; background: linear-gradient(135deg, #10b981, #06b6d4); text-decoration: none; padding: 0.85rem 1.5rem; font-size: 1rem; font-weight: 700; border: none;">
+                        <i class="ph-download-simple"></i> ${txtDownloadFull}
                       </a>
                     </div>
                   ` : ''}
@@ -445,20 +475,26 @@
             ${isLocked && currentPageIndex >= previewLimit ? `
               <div class="paywall-card">
                 <div class="paywall-icon"><i class="ph-lock"></i></div>
-                <h2 style="color:#fff; font-size:1.4rem; font-weight:800;">Límite de Muestra Gratuita</h2>
+                <h2 style="color:#fff; font-size:1.4rem; font-weight:800;">${txtPaywallTitle}</h2>
                 <p style="color: var(--text-muted); font-size: 0.92rem;">
-                  Has leído las ${previewLimit} páginas gratuitas. ¡Para continuar leyendo las ${pages.length} páginas de este cómic, elige tu método de pago preferido!
+                  ${txtPaywallDesc}
                 </p>
                 <div class="paywall-price">$${item.price.toFixed(2)} USD</div>
                 <div style="display: flex; flex-direction: column; gap: 0.75rem; width: 100%; margin-top: 0.5rem;">
-                  <button class="btn-primary" id="paywall-unlock-btn" style="width: 100%; justify-content: center; font-size: 1rem; padding: 0.85rem; background: linear-gradient(135deg, #009ee3, #0070ba); border: none; font-weight: 700;">
-                    <i class="ph-credit-card"></i> Pagar con MercadoPago (Yape / Plin / Tarjeta Débito/Crédito)
-                  </button>
-                  ${(item.paypalUrl || item.paypalLink) ? `
-                    <button class="btn-secondary" id="paywall-paypal-btn" style="width: 100%; justify-content: center; font-size: 1rem; padding: 0.85rem; background: #003087; color: #ffffff; border: 1px solid #0070ba; font-weight: 700;">
-                      <i class="ph-paypal-logo"></i> Pagar con PayPal (Tarjeta Débito/Crédito)
+                  ${isEn ? `
+                    <button class="btn-primary" id="paywall-paypal-btn" style="width: 100%; justify-content: center; font-size: 1rem; padding: 0.85rem; background: linear-gradient(135deg, #003087, #0070ba); color: #ffffff; border: none; font-weight: 700;">
+                      ${txtPaypalBtn}
                     </button>
-                  ` : ''}
+                  ` : `
+                    <button class="btn-primary" id="paywall-unlock-btn" style="width: 100%; justify-content: center; font-size: 1rem; padding: 0.85rem; background: linear-gradient(135deg, #009ee3, #0070ba); border: none; font-weight: 700;">
+                      ${txtMpBtn}
+                    </button>
+                    ${(item.paypalUrl || item.paypalLink) ? `
+                      <button class="btn-secondary" id="paywall-paypal-btn" style="width: 100%; justify-content: center; font-size: 1rem; padding: 0.85rem; background: #003087; color: #ffffff; border: 1px solid #0070ba; font-weight: 700;">
+                        ${txtPaypalBtn}
+                      </button>
+                    ` : ''}
+                  `}
                 </div>
               </div>
             ` : `
