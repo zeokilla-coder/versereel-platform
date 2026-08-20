@@ -53,12 +53,12 @@
       description: "¡Un clásico del cómic rediseñado como nunca lo viste!",
       isPaid: true,
       price: 2.99,
-      previewLimit: 20,
+      previewLimit: 21,
       paymentUrl: "https://mpago.la/2om6XKk",
       paypalUrl: "https://www.paypal.com/invoice/p/#4EV2U6E59BUXU3C6",
       downloadUrl: "assets/NO INTERNET.pdf",
       thumbnail: "assets/0.jpg",
-      pages: Array.from({ length: 31 }, (_, i) => `assets/${i}.jpg`),
+      pages: ['assets/0.jpg', 'assets/ADICIONAL ESPAÑOL.jpg', ...Array.from({ length: 30 }, (_, i) => `assets/${i + 1}.jpg`)],
       views: 142,
       createdAt: new Date().toISOString()
     }
@@ -342,7 +342,7 @@
     overlay.id = 'fullpage-comic-reader-overlay';
     overlay.className = 'fullpage-reader';
 
-    let readerMode = 'webtoon'; // 'webtoon' (vertical scroll) | 'single' (paginado)
+    let readerMode = 'single'; // 'single' (paginado predeterminado) | 'webtoon' (vertical scroll)
     let currentPageIndex = 0;
     let zoomLevel = 100;
 
@@ -355,6 +355,15 @@
 
       const txtCatalog = isEn ? 'Catalog' : 'Catálogo';
       const txtDownloadHd = isEn ? 'Download HD' : 'Descargar HD';
+      const txtModeWebtoon = isEn ? 'Webtoon' : 'Webtoon';
+      const txtModeSingle = isEn ? 'Paginated' : 'Paginado';
+      const txtCloseTooltip = isEn ? 'Close Reader' : 'Cerrar Lector';
+      const txtPrev = isEn ? 'Previous' : 'Anterior';
+      const txtNext = isEn ? 'Next' : 'Siguiente';
+      const txtPageWord = isEn ? 'Page' : 'Página';
+      const txtOfWord = isEn ? 'of' : 'de';
+      const txtPageCounter = `${txtPageWord} <span style="color: var(--primary);" id="page-counter-num">${currentPageIndex + 1}</span> ${txtOfWord} ${pages.length}`;
+
       const txtPaywallTitle = isEn ? 'Free Preview Limit' : 'Límite de Muestra Gratuita';
       const txtPaywallDesc = isEn
         ? `You have read the ${previewLimit} free preview pages. To continue enjoying all ${pages.length} pages of this comic, select your payment method below!`
@@ -395,14 +404,14 @@
             <!-- Mode Switcher Pill -->
             <div class="mode-toggle-pill">
               <button type="button" class="mode-toggle-btn ${readerMode === 'webtoon' ? 'active' : ''}" id="mode-webtoon-btn">
-                <i class="ph-rows"></i> Webtoon
+                <i class="ph-rows"></i> ${txtModeWebtoon}
               </button>
               <button type="button" class="mode-toggle-btn ${readerMode === 'single' ? 'active' : ''}" id="mode-single-btn">
-                <i class="ph-book-open"></i> Paginado
+                <i class="ph-book-open"></i> ${txtModeSingle}
               </button>
             </div>
 
-            <button type="button" id="close-reader-x-btn" style="background: rgba(244,63,94,0.2); border: 1px solid var(--rose); color: var(--rose); width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; cursor: pointer;" title="Cerrar Lector">
+            <button type="button" id="close-reader-x-btn" style="background: rgba(244,63,94,0.2); border: 1px solid var(--rose); color: var(--rose); width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; cursor: pointer;" title="${txtCloseTooltip}">
               &times;
             </button>
           </div>
@@ -446,9 +455,9 @@
                 }
                 return `
                   <div style="width:100%; position:relative;" id="page-elem-${idx}">
-                    <img src="${pageUrl}" class="webtoon-page-img" alt="Página ${idx + 1}" loading="lazy" />
+                    <img src="${pageUrl}" class="webtoon-page-img" alt="${txtPageWord} ${idx + 1}" loading="lazy" />
                     <div style="position:absolute; bottom:8px; right:12px; background:rgba(0,0,0,0.6); color:rgba(255,255,255,0.7); font-size:0.7rem; padding:2px 6px; border-radius:4px;">
-                      Pág ${idx + 1}
+                      ${isEn ? 'Page' : 'Pág'} ${idx + 1}
                     </div>
                   </div>
                   ${!isLocked && idx === pages.length - 1 ? `
@@ -498,7 +507,7 @@
                 </div>
               </div>
             ` : `
-              <img src="${pages[currentPageIndex]}" class="single-page-img" id="single-page-img" alt="Página ${currentPageIndex + 1}" />
+              <img src="${pages[currentPageIndex]}" class="single-page-img" id="single-page-img" alt="${txtPageWord} ${currentPageIndex + 1}" />
             `}
           </div>
         `}
@@ -506,12 +515,12 @@
         <!-- Floating Bottom Toolbar -->
         <footer class="reader-bottom-bar">
           <button class="btn-secondary" id="reader-prev-btn" ${currentPageIndex === 0 || readerMode === 'webtoon' ? 'disabled style="opacity:0.3;"' : ''}>
-            <i class="ph-caret-left"></i> Anterior
+            <i class="ph-caret-left"></i> ${txtPrev}
           </button>
 
           <div style="display: flex; align-items: center; gap: 0.75rem;">
             <span style="font-size: 0.88rem; font-weight: 800; color: #fff;">
-              Página <span style="color: var(--primary);" id="page-counter-num">${currentPageIndex + 1}</span> de ${pages.length}
+              ${txtPageCounter}
             </span>
 
             <!-- Zoom Pill -->
@@ -523,7 +532,7 @@
           </div>
 
           <button class="btn-primary" id="reader-next-btn" ${currentPageIndex === pages.length - 1 || readerMode === 'webtoon' ? 'disabled style="opacity:0.3;"' : ''}>
-            Siguiente <i class="ph-caret-right"></i>
+            ${txtNext} <i class="ph-caret-right"></i>
           </button>
         </footer>
       `;
