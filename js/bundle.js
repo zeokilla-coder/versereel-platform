@@ -38,7 +38,7 @@
       previewLimit: 12,
       paymentUrl: "https://mpago.la/2om6XKk",
       paypalUrl: "https://www.paypal.com/invoice/p/#4EV2U6E59BUXU3C6",
-      downloadUrl: "assets/L00.jpg",
+      downloadUrl: "assets/LEMONADE.pdf",
       thumbnail: "assets/L00.jpg",
       pages: Array.from({ length: 20 }, (_, i) => `assets/L${String(i).padStart(2, '0')}.jpg`),
       views: 350,
