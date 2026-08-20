@@ -26,6 +26,24 @@
   // =========================================================================
   const COMICS_CATALOG = [
     {
+      id: "lemonade",
+      title: "LEMONADE",
+      type: "comic",
+      genre: "Romance",
+      author: "Zkero",
+      description: "Classic comic. Now more intense!",
+      isPaid: true,
+      price: 2.99,
+      previewLimit: 12,
+      paymentUrl: "https://mpago.la/2om6XKk",
+      paypalUrl: "https://www.paypal.com/invoice/p/#4EV2U6E59BUXU3C6",
+      downloadUrl: "assets/L00.jpg",
+      thumbnail: "assets/L00.jpg",
+      pages: Array.from({ length: 20 }, (_, i) => `assets/L${String(i).padStart(2, '0')}.jpg`),
+      views: 350,
+      createdAt: new Date().toISOString()
+    },
+    {
       id: "no-internet",
       title: "NO INTERNET",
       type: "comic",
