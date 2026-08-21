@@ -47,15 +47,16 @@
     {
       id: "no-internet",
       title: "NO INTERNET",
+      language: "es",
       type: "comic",
       genre: "Romance",
       author: "Zkero",
       description: "¡Un clásico del cómic rediseñado como nunca lo viste!",
       isPaid: true,
-      price: 2.99,
+      price: 0.99,
       previewLimit: 21,
-      paymentUrl: "https://mpago.la/2om6XKk",
-      paypalUrl: "https://www.paypal.com/invoice/p/#4EV2U6E59BUXU3C6",
+      paymentUrl: "https://mpago.la/1DtXktD",
+      paypalUrl: "https://www.paypal.com/invoice/p/#R95GE9KUJSUDQU6N",
       downloadUrl: "assets/NO INTERNET.pdf",
       thumbnail: "assets/0.jpg",
       pages: ['assets/0.jpg', 'assets/ADICIONAL ESPAÑOL.jpg', ...Array.from({ length: 30 }, (_, i) => `assets/${i + 1}.jpg`)],
@@ -1622,6 +1623,9 @@
                 <img src="${item.thumbnail}" class="card-thumb" alt="${item.title}" />
                 <div class="card-badge-top">
                   <span class="media-badge ${item.type}">${item.type.toUpperCase()}</span>
+                  <span class="price-tag" style="background: rgba(168,85,247,0.25); color: #c084fc; border: 1px solid rgba(168,85,247,0.4); font-size: 0.72rem; padding: 2px 6px; border-radius: 4px; font-weight: 700; display: inline-flex; align-items: center; gap: 3px;">
+                    ${item.language === 'en' ? '🇺🇸 EN' : '🇪🇸 ES'}
+                  </span>
                   ${item.isPaid ? `<span class="price-tag paid">$${item.price.toFixed(2)}</span>` : '<span class="price-tag free">FREE</span>'}
                 </div>
               </div>
