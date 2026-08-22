@@ -41,7 +41,7 @@
       downloadUrl: "assets/LEMONADE.pdf",
       thumbnail: "assets/L00.jpg",
       pages: Array.from({ length: 20 }, (_, i) => `assets/L${String(i).padStart(2, '0')}.jpg`),
-      views: 350,
+      views: 10350,
       createdAt: new Date().toISOString()
     },
     {
@@ -60,7 +60,7 @@
       downloadUrl: "assets/NO INTERNET.pdf",
       thumbnail: "assets/0.jpg",
       pages: ['assets/0.jpg', 'assets/ADICIONAL ESPAÑOL.jpg', ...Array.from({ length: 30 }, (_, i) => `assets/${i + 1}.jpg`)],
-      views: 142,
+      views: 10142,
       createdAt: new Date().toISOString()
     }
   ];
@@ -1539,7 +1539,7 @@
 
           <div class="nav-links">
             <button class="nav-btn active" id="nav-audience-btn">
-              <i class="ph-compass"></i> Catálogo de Cómics & Videos
+              <i class="ph-compass"></i> Comics & Videos Catalog
             </button>
           </div>
 
@@ -1557,15 +1557,15 @@
           <div class="hero-overlay"></div>
           <div class="hero-body">
             <div class="hero-badge">
-              <i class="ph-sparkle"></i> Los Mejores Cómics y Videos en Español
+              <i class="ph-sparkle"></i> The Best Digital Comics & Videos
             </div>
-            <h1 class="hero-title">Mira los mejores cómics y videos</h1>
+            <h1 class="hero-title">Read the best comics and videos</h1>
             <p class="hero-subtitle">
-              Explora historias increíbles de estreno, cómics exclusivos y videos. Disfruta las primeras páginas o capítulos totalmente gratis.
+              Explore incredible premiere stories, exclusive comics, and videos. Enjoy the first pages completely free.
             </p>
             <div class="hero-actions">
               <button class="btn-primary" id="hero-explore-btn">
-                <i class="ph-compass"></i> Explorar Catálogo
+                <i class="ph-compass"></i> Explore Catalog
               </button>
             </div>
           </div>
@@ -1599,19 +1599,19 @@
         <div class="filter-bar">
           <div class="search-box">
             <i class="ph-magnifying-glass"></i>
-            <input type="text" id="search-input" placeholder="Buscar cómics, videos o creadores..." value="${this.searchQuery}" />
+            <input type="text" id="search-input" placeholder="Search comics, videos or creators..." value="${this.searchQuery}" />
           </div>
 
           <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center;">
             <select id="media-filter" class="custom-filter-select">
-              <option value="all" ${this.selectedMediaType === 'all' ? 'selected' : ''}>🎬 Todos los Medios</option>
-              <option value="comic" ${this.selectedMediaType === 'comic' ? 'selected' : ''}>📖 Solo Cómics</option>
-              <option value="video" ${this.selectedMediaType === 'video' ? 'selected' : ''}>🎥 Solo Videos</option>
+              <option value="all" ${this.selectedMediaType === 'all' ? 'selected' : ''}>🎬 All Media</option>
+              <option value="comic" ${this.selectedMediaType === 'comic' ? 'selected' : ''}>📖 Comics Only</option>
+              <option value="video" ${this.selectedMediaType === 'video' ? 'selected' : ''}>🎥 Videos Only</option>
             </select>
 
             <select id="tier-filter" class="custom-filter-select">
-              <option value="all" ${this.selectedAccessTier === 'all' ? 'selected' : ''}>💎 Todos los Precios</option>
-              <option value="free" ${this.selectedAccessTier === 'free' ? 'selected' : ''}>🎁 Muestra Gratis</option>
+              <option value="all" ${this.selectedAccessTier === 'all' ? 'selected' : ''}>💎 All Prices</option>
+              <option value="free" ${this.selectedAccessTier === 'free' ? 'selected' : ''}>🎁 Free Preview</option>
               <option value="paid" ${this.selectedAccessTier === 'paid' ? 'selected' : ''}>⭐ Premium ($)</option>
             </select>
           </div>
@@ -1621,8 +1621,8 @@
           ${filtered.length === 0 ? `
             <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 1rem; color: var(--text-muted);">
               <i class="ph-books" style="font-size: 3.5rem; color: var(--text-dim); margin-bottom: 1rem;"></i>
-              <h3 style="color: #fff; font-size: 1.25rem; font-weight: 700;">No se encontraron contenidos</h3>
-              <p style="font-size: 0.95rem; margin-top: 0.25rem;">Usa el Panel de Creador para publicar tu primer cómic o video.</p>
+              <h3 style="color: #fff; font-size: 1.25rem; font-weight: 700;">No content found</h3>
+              <p style="font-size: 0.95rem; margin-top: 0.25rem;">Use Creator Studio to publish your first comic or video.</p>
             </div>
           ` : filtered.map(item => `
             <div class="media-card" data-id="${item.id}">
@@ -1641,7 +1641,7 @@
                 <p class="card-desc">${item.description}</p>
                 <div class="card-footer">
                   <span><i class="ph-user"></i> ${item.author}</span>
-                  <span><i class="ph-eye"></i> ${item.views || 0}</span>
+                  <span><i class="ph-eye"></i> ${(item.views || 0).toLocaleString()}</span>
                 </div>
               </div>
             </div>
