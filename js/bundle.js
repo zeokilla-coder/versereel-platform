@@ -186,7 +186,11 @@
     }
 
     getItems() {
-      return [...COMICS_CATALOG];
+      const viewsMap = this.data.viewsMap || {};
+      return COMICS_CATALOG.map(item => ({
+        ...item,
+        views: (item.views || 0) + (viewsMap[item.id] || 0)
+      }));
     }
 
     isItemUnlocked(itemId) {
@@ -245,12 +249,10 @@
     }
 
     incrementViews(itemId) {
-      const item = this.data.items.find(i => i.id === itemId);
-      if (item) {
-        item.views = (item.views || 0) + 1;
-        this.data.creatorStats.totalViews = (this.data.creatorStats.totalViews || 0) + 1;
-        this.saveData();
-      }
+      if (!this.data.viewsMap) this.data.viewsMap = {};
+      this.data.viewsMap[itemId] = (this.data.viewsMap[itemId] || 0) + 1;
+      this.data.creatorStats.totalViews = (this.data.creatorStats.totalViews || 0) + 1;
+      this.saveData();
     }
   }
 
