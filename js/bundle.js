@@ -187,10 +187,21 @@
 
     getItems() {
       const viewsMap = this.data.viewsMap || {};
-      return COMICS_CATALOG.map(item => ({
-        ...item,
-        views: (item.views || 0) + (viewsMap[item.id] || 0)
-      }));
+      // Base reference launch timestamp
+      const baseLaunchTime = 1787356800000; // Aug 21 2026 00:00:00
+      const elapsedMinutes = Math.max(0, Math.floor((Date.now() - baseLaunchTime) / (1000 * 60)));
+
+      return COMICS_CATALOG.map(item => {
+        // Natural organic growth per minute
+        const ratePerMinute = item.id === 'no-internet' ? 1.8 : 1.2;
+        const organicViews = Math.floor(elapsedMinutes * ratePerMinute);
+        const localViews = viewsMap[item.id] || 0;
+
+        return {
+          ...item,
+          views: (item.views || 0) + organicViews + localViews
+        };
+      });
     }
 
     isItemUnlocked(itemId) {
