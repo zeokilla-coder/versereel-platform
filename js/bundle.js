@@ -665,6 +665,13 @@
       history.pushState({}, '', '?comic=' + item.id);
     }
     store.incrementViews(item.id);
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'select_content', {
+        content_type: 'comic',
+        item_id: item.id,
+        item_name: item.title
+      });
+    }
   }
 
   function createComicReaderModal(item, onClose, onUnlockRequest) {

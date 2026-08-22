@@ -28,13 +28,24 @@
     }
   </script>
 
+  <!-- Google Analytics 4 (GA4) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-BW1CYXKB7N"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-BW1CYXKB7N', {
+      send_page_view: true
+    });
+  </script>
+
   <!-- Main CSS -->
-  <link rel="stylesheet" href="styles/main.css?v=26.0" />
+  <link rel="stylesheet" href="styles/main.css?v=27.0" />
 </head>
 <body>
   <div id="app"></div>
 
   <!-- Application Script (Production Standalone Bundle) -->
-  <script src="js/bundle.js?v=26.0"></script>
+  <script src="js/bundle.js?v=27.0"></script>
 </body>
 </html>
