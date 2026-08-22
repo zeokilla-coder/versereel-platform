@@ -367,14 +367,14 @@
 
       const txtPaywallTitle = isEn ? 'Free Preview Limit' : 'Límite de Muestra Gratuita';
       const txtPaywallDesc = isEn
-        ? `You have read the ${previewLimit} free preview pages. To continue enjoying all ${pages.length} pages of this comic, select your payment method below!`
-        : `Has leído las ${previewLimit} páginas gratuitas. ¡Para continuar disfrutando de las ${pages.length} páginas de este cómic, elige tu método de pago preferido!`;
+        ? `You have read the ${previewLimit} free preview pages. To continue enjoying all ${pages.length} pages of this comic and download your full High-Definition (HD) copy, select your payment method below!`
+        : `Has leído las ${previewLimit} páginas gratuitas. ¡Para continuar disfrutando de las ${pages.length} páginas de este cómic y descargar tu copia completa en Alta Resolución (HD), elige tu método de pago preferido!`;
       const txtPaypalBtn = isEn
         ? '<i class="ph-paypal-logo"></i> Pay with PayPal (Credit / Debit Card)'
         : '<i class="ph-paypal-logo"></i> Pagar con PayPal (Tarjeta Débito/Crédito)';
       const txtMpBtn = isEn
-        ? '<i class="ph-credit-card"></i> Pay with MercadoPago (Cards / Local)'
-        : '<i class="ph-credit-card"></i> Pagar con MercadoPago (Yape / Plin / Tarjeta Débito/Crédito)';
+        ? '<i class="ph-credit-card"></i> Pay with MercadoPago (Credit / Debit Card / Local)'
+        : '<i class="ph-credit-card"></i> Pagar con MercadoPago (Tarjeta Débito/Crédito / Yape / Plin)';
       const txtThanksTitle = isEn
         ? `Thank you for buying "${item.title}"!`
         : `¡Gracias por comprar "${item.title}"!`;
