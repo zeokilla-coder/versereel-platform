@@ -397,6 +397,9 @@
       const txtDownloadFull = isEn
         ? 'Download Full Comic (HD)'
         : 'Descargar Cómic Completo (HD)';
+      const txtPromoBadge = isEn
+        ? '🔥 LAUNCH OFFER 67% OFF — ONLY $0.99 USD (Regular $2.99)'
+        : '🔥 OFERTA DE LANZAMIENTO 67% OFF — SOLO $0.99 USD (Precio regular $2.99)';
 
       overlay.innerHTML = `
         <!-- Top Navbar -->
@@ -445,6 +448,9 @@
                         <p style="color: var(--text-muted); font-size: 0.92rem;">
                           ${txtPaywallDesc}
                         </p>
+                        <div style="background: linear-gradient(135deg, rgba(239,68,68,0.2), rgba(245,158,11,0.2)); border: 1px solid #f59e0b; color: #fbbf24; font-size: 0.85rem; font-weight: 800; padding: 0.6rem 0.85rem; border-radius: var(--radius-md); text-align: center; margin: 0.75rem 0; width: 100%; box-sizing: border-box; text-shadow: 0 1px 4px rgba(0,0,0,0.8);">
+                          ${txtPromoBadge}
+                        </div>
                         <div class="paywall-price">$${item.price.toFixed(2)} USD</div>
                         <div style="display: flex; flex-direction: column; gap: 0.75rem; width: 100%; margin-top: 0.5rem;">
                           ${isEn ? `
@@ -502,6 +508,9 @@
                 <p style="color: var(--text-muted); font-size: 0.92rem;">
                   ${txtPaywallDesc}
                 </p>
+                <div style="background: linear-gradient(135deg, rgba(239,68,68,0.2), rgba(245,158,11,0.2)); border: 1px solid #f59e0b; color: #fbbf24; font-size: 0.85rem; font-weight: 800; padding: 0.6rem 0.85rem; border-radius: var(--radius-md); text-align: center; margin: 0.75rem 0; width: 100%; box-sizing: border-box; text-shadow: 0 1px 4px rgba(0,0,0,0.8);">
+                  ${txtPromoBadge}
+                </div>
                 <div class="paywall-price">$${item.price.toFixed(2)} USD</div>
                 <div style="display: flex; flex-direction: column; gap: 0.75rem; width: 100%; margin-top: 0.5rem;">
                   ${isEn ? `
